@@ -1,26 +1,607 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================
+   01. BRAND IDENTITY
+   Core identity: Obsidian / Electric Blue / Gold
+   Supporting colors never compete with the core.
+   ========================================================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  /* Signature colors */
+  --brand-obsidian: #090a0c;
+  --brand-electric: #1265f4;
+  --brand-gold: #f4be28;
+
+  /* Original complimentary colors */
+  --brand-lilac: #e7e6f7;
+  --brand-rose: #e3d0d8;
+
+  /* Neutral foundation */
+  --brand-white: #ffffff;
+  --brand-paper: #fafaf9;
+  --brand-mist: #f4f6fa;
+  --brand-graphite: #191c23;
+  --brand-slate: #555d6b;
+
+  /* ========================================================
+     02. OBSIDIAN SCALE
+     For premium surfaces, depth and contrast.
+     ======================================================== */
+
+  --obsidian-950: #090a0c;
+  --obsidian-900: #111318;
+  --obsidian-800: #191c23;
+  --obsidian-700: #252933;
+  --obsidian-600: #383d49;
+  --obsidian-500: #626875;
+  --obsidian-400: #9298a4;
+  --obsidian-300: #c1c5ce;
+  --obsidian-200: #dfe2e9;
+  --obsidian-100: #eef0f5;
+  --obsidian-50: #f7f8fb;
+
+  /* ========================================================
+     03. ELECTRIC BLUE SCALE
+     ======================================================== */
+
+  --electric-950: #08245c;
+  --electric-900: #0a388e;
+  --electric-800: #0b4dcc;
+  --electric-700: #1058df;
+  --electric-600: #1265f4;
+  --electric-500: #347dff;
+  --electric-400: #639bff;
+  --electric-300: #91b7ff;
+  --electric-200: #bed4ff;
+  --electric-100: #dce8ff;
+  --electric-50: #eff5ff;
+
+  /* ========================================================
+     04. SIGNATURE GOLD SCALE
+     ======================================================== */
+
+  --gold-950: #493200;
+  --gold-900: #684900;
+  --gold-800: #946900;
+  --gold-700: #bd8909;
+  --gold-600: #dfaa14;
+  --gold-500: #f4be28;
+  --gold-400: #f7cf5d;
+  --gold-300: #f9dc87;
+  --gold-200: #fbe8b2;
+  --gold-100: #fdf3d7;
+  --gold-50: #fffaf0;
+
+  /* ========================================================
+     05. EXTENDED CREATIVE PALETTE
+     ======================================================== */
+
+  --creative-lilac: #e7e6f7;
+  --creative-rose: #e3d0d8;
+  --creative-paper: #fafaf9;
+  --creative-cool: #f4f6fa;
+  --creative-blue-wash: #edf3ff;
+
+  /* ========================================================
+     06. LIGHT THEME — SEMANTIC TOKENS
+     ======================================================== */
+
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-subtle: #f4f6fa;
+  --surface-inverse: #090a0c;
+  --surface-creative: #e7e6f7;
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #ffffff;
+
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Status colors */
+  --success: #176b45;
+  --success-surface: #eaf6ef;
+
+  --warning: #805600;
+  --warning-surface: #fff5dc;
+
+  --danger: #b4233b;
+  --danger-surface: #fff0f2;
+
+  --info: #1058df;
+  --info-surface: #edf3ff;
+
+  /* Interface geometry */
+  --radius: 0.625rem;
+
+  /* Elevation */
+  --shadow-premium-sm: 0 2px 8px rgb(9 10 12 / 4%);
+  --shadow-premium-md:
+    0 8px 24px rgb(9 10 12 / 5%),
+    0 1px 3px rgb(9 10 12 / 3%);
+  --shadow-premium-lg: 0 24px 64px rgb(9 10 12 / 10%);
+  --shadow-premium-blue: 0 8px 24px rgb(18 101 244 / 18%);
+
+  /* Data visualization */
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
+
+/* ==========================================================
+   07. TAILWIND CSS V4
+   ========================================================== */
 
 @theme inline {
+  /* Core identity */
+  --color-brand-obsidian: #090a0c;
+  --color-brand-electric: #1265f4;
+  --color-brand-gold: #f4be28;
+
+  /* Original aliases */
+  --color-brand-black: #090a0c;
+  --color-brand-blue: #1265f4;
+  --color-brand-lilac: #e7e6f7;
+  --color-brand-rose: #e3d0d8;
+  --color-brand-white: #ffffff;
+
+  /* Supporting colors */
+  --color-brand-paper: #fafaf9;
+  --color-brand-mist: #f4f6fa;
+  --color-brand-graphite: #191c23;
+  --color-brand-slate: #555d6b;
+  --color-brand-blue-wash: #edf3ff;
+
+  /* Obsidian */
+  --color-obsidian-950: #090a0c;
+  --color-obsidian-900: #111318;
+  --color-obsidian-800: #191c23;
+  --color-obsidian-700: #252933;
+  --color-obsidian-600: #383d49;
+  --color-obsidian-500: #626875;
+  --color-obsidian-400: #9298a4;
+  --color-obsidian-300: #c1c5ce;
+  --color-obsidian-200: #dfe2e9;
+  --color-obsidian-100: #eef0f5;
+  --color-obsidian-50: #f7f8fb;
+
+  /* Electric */
+  --color-electric-950: #08245c;
+  --color-electric-900: #0a388e;
+  --color-electric-800: #0b4dcc;
+  --color-electric-700: #1058df;
+  --color-electric-600: #1265f4;
+  --color-electric-500: #347dff;
+  --color-electric-400: #639bff;
+  --color-electric-300: #91b7ff;
+  --color-electric-200: #bed4ff;
+  --color-electric-100: #dce8ff;
+  --color-electric-50: #eff5ff;
+
+  /* Gold */
+  --color-gold-950: #493200;
+  --color-gold-900: #684900;
+  --color-gold-800: #946900;
+  --color-gold-700: #bd8909;
+  --color-gold-600: #dfaa14;
+  --color-gold-500: #f4be28;
+  --color-gold-400: #f7cf5d;
+  --color-gold-300: #f9dc87;
+  --color-gold-200: #fbe8b2;
+  --color-gold-100: #fdf3d7;
+  --color-gold-50: #fffaf0;
+
+  /* Semantic tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-surface-creative: var(--surface-creative);
+
+  /* shadcn compatibility */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Status utilities */
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-info: var(--info);
+  --color-info-surface: var(--info-surface);
+
+  /* Typography */
+  --font-sans: var(--font-lato), sans-serif;
+  --font-heading: var(--font-poppins), sans-serif;
+  --font-mono: var(--font-geist-mono, monospace);
+
+  /* Radius */
+  --radius-xs: calc(var(--radius) - 6px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 12px);
+  --radius-3xl: calc(var(--radius) + 20px);
+
+  /* Shadows */
+  --shadow-premium-sm: 0 2px 8px rgb(9 10 12 / 4%);
+  --shadow-premium-md:
+    0 8px 24px rgb(9 10 12 / 5%),
+    0 1px 3px rgb(9 10 12 / 3%);
+  --shadow-premium-lg: 0 24px 64px rgb(9 10 12 / 10%);
+  --shadow-premium-blue: 0 8px 24px rgb(18 101 244 / 18%);
+
+  /* Controlled gradients */
+  --background-image-brand-dark:
+    linear-gradient(145deg, #090a0c 0%, #191c23 100%);
+
+  --background-image-brand-electric:
+    linear-gradient(135deg, #1265f4 0%, #347dff 100%);
+
+  --background-image-brand-gold:
+    linear-gradient(135deg, #f4be28 0%, #f7cf5d 100%);
+
+  --background-image-brand-editorial:
+    linear-gradient(135deg, #e7e6f7 0%, #e3d0d8 100%);
+
+  --font-heading: var(--font-sans);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-sidebar-border: var(--sidebar-border);
+
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
+  --color-sidebar-primary: var(--sidebar-primary);
+
+  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  --color-sidebar: var(--sidebar);
+
+  --color-chart-5: var(--chart-5);
+
+  --color-chart-4: var(--chart-4);
+
+  --color-chart-3: var(--chart-3);
+
+  --color-chart-2: var(--chart-2);
+
+  --color-chart-1: var(--chart-1);
+
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ==========================================================
+   08. DARK THEME
+   ========================================================== */
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+
+  --surface: #090a0c;
+  --surface-raised: #191c23;
+  --surface-subtle: #111318;
+  --surface-inverse: #ffffff;
+  --surface-creative: #1c1b28;
+
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: #090a0c;
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --success: #68d9a3;
+  --success-surface: #102a20;
+
+  --warning: #f7cf5d;
+  --warning-surface: #302710;
+
+  --danger: #ff8293;
+  --danger-surface: #34161e;
+
+  --info: #91b7ff;
+  --info-surface: #142444;
+
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+
+  --shadow-premium-sm: 0 2px 8px rgb(0 0 0 / 18%);
+  --shadow-premium-md: 0 8px 24px rgb(0 0 0 / 24%);
+  --shadow-premium-lg: 0 24px 64px rgb(0 0 0 / 35%);
+  --shadow-premium-blue: 0 8px 24px rgb(18 101 244 / 25%);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ==========================================================
+   09. BASE STYLES
+   ========================================================== */
+
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+    font-family: var(--font-lato), sans-serif;
+    @apply font-sans;
+  }
+
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-lato), sans-serif;
+    text-rendering: optimizeLegibility;
+    @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .brand-display {
+    font-family: var(--font-poppins), sans-serif;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background: var(--brand-gold);
+    color: var(--brand-obsidian);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+/* ==========================================================
+   10. PREMIUM BRAND UTILITIES
+   ========================================================== */
+
+@utility brand-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 2.5rem;
+  }
+
+  @media (min-width: 1280px) {
+    padding-inline: 5rem;
+  }
+}
+
+@utility brand-eyebrow {
+  color: var(--brand-electric);
+  font-size: 0.6875rem;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+@utility brand-display {
+  font-weight: 700;
+  letter-spacing: -0.065em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+@utility brand-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  box-shadow: var(--shadow-premium-sm);
+}
+
+@utility brand-dark-panel {
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: var(--radius-xl);
+  background: #090a0c;
+  color: #e7e6f7;
+}
+
+@utility brand-gold-rule {
+  &::before {
+    display: block;
+    width: 2.5rem;
+    height: 2px;
+    margin-bottom: 1.25rem;
+    border-radius: 9999px;
+    background: var(--brand-gold);
+    content: "";
+  }
+}
+
+@utility brand-gradient-text {
+  background-image: linear-gradient(
+    110deg,
+    #1265f4 0%,
+    #639bff 100%
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@utility brand-grid {
+  background-image:
+    linear-gradient(rgb(18 101 244 / 7%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(18 101 244 / 7%) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@utility brand-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border: 1px solid transparent;
+  border-radius: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.25rem;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
 }
