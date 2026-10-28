@@ -1,13 +1,9 @@
-
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRightOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
+import { ArrowRightOutlined, CheckOutlined } from "@ant-design/icons";
+
 
 const services = [
   "Digital marketing",
@@ -42,7 +38,7 @@ export const Hero = () => {
       </div>
 
       <div className="brand-container relative">
-        <div className="grid items-center gap-10 py-12 sm:py-16 lg:min-h-[760px] lg:grid-cols-12 lg:gap-8 lg:py-14 xl:min-h-[810px] xl:gap-10">
+        <div className="grid items-center gap-10 py-10 sm:py-14 lg:min-h-[760px] lg:grid-cols-12 lg:gap-8 lg:py-12 xl:min-h-[810px] xl:gap-10">
           {/* LEFT — EDITORIAL BRAND STATEMENT */}
           <motion.div
             {...reveal(0.05)}
