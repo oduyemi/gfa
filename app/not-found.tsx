@@ -93,7 +93,7 @@ export default function NotFound() {
           </div>
         </motion.div>
 
-        <div className="grid flex-1 items-center gap-8 py-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-2 lg:py-8">
+        <div className="grid flex-1 grid-cols-1 items-center gap-4 py-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-2 lg:py-8">
           <section className="relative z-10 max-w-[560px]">
             <motion.div {...reveal(0.12)} className="flex items-center gap-3">
               <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
