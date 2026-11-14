@@ -260,7 +260,7 @@ export default function NotFound() {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="absolute bottom-[14%] left-[4%] z-10 w-[190px] rounded-2xl border border-border/80 bg-card/95 p-4 shadow-premium-md backdrop-blur-xl sm:w-[215px]"
+                className="absolute bottom-[-5%] left-[4%] z-10 w-[190px] rounded-2xl border border-border/80 bg-card/95 p-4 shadow-premium-md backdrop-blur-xl sm:w-[215px]"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
