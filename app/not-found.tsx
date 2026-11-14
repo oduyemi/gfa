@@ -94,7 +94,7 @@ export default function NotFound() {
         </motion.div>
 
         <div className="grid flex-1 grid-cols-1 items-center gap-4 py-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-2 lg:py-8">
-          <section className="relative z-10 max-w-[560px]">
+          <section className="relative z-10 order-2 max-w-[560px] lg:order-1">
             <motion.div {...reveal(0.12)} className="flex items-center gap-3">
               <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
                 A little unexpected detour
@@ -172,7 +172,7 @@ export default function NotFound() {
               ease: [0.22, 1, 0.36, 1],
             }}
             aria-label="404 illustration"
-            className="relative mx-auto flex w-full max-w-[660px] items-center justify-center py-8 lg:py-0"
+            className="relative order-1 mx-auto flex w-full max-w-[660px] items-center justify-center py-4 lg:order-2 lg:py-0"
           >
             <div className="relative aspect-square w-full max-w-[600px]">
               <div
