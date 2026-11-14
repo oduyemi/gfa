@@ -304,9 +304,9 @@ export default function NotFound() {
                 <MoveUpRight size={23} strokeWidth={1.8} />
               </div>
 
-              <div className="absolute left-[17%] top-[18%] text-brand-electric">
+              {/* <div className="absolute left-[17%] top-[18%] text-brand-electric">
                 <Sparkles size={19} strokeWidth={1.4} />
-              </div>
+              </div> */}
 
               <div className="absolute right-[21%] top-[68%] size-1.5 rounded-full bg-brand-electric shadow-[0_0_14px_rgba(18,101,244,0.65)]" />
             </div>
