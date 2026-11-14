@@ -2,209 +2,228 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRightOutlined, CheckOutlined } from "@ant-design/icons";
-
-
-const services = [
-  "Digital marketing",
-  "Creative",
-  "Virtual assistance",
-];
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  MoveUpRight,
+} from "lucide-react";
 
 export const Hero = () => {
-  const shouldReduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotion();
 
-  const reveal = (delay = 0) => ({
-    initial: shouldReduceMotion ? false : { opacity: 0, y: 18 },
+  const enter = {
+    initial: { opacity: 0, y: reduceMotion ? 0 : 20 },
     animate: { opacity: 1, y: 0 },
     transition: {
-      duration: shouldReduceMotion ? 0 : 0.75,
-      delay: shouldReduceMotion ? 0 : delay,
+      duration: 0.7,
       ease: [0.22, 1, 0.36, 1] as const,
     },
-  });
+  };
 
   return (
-    <section className="relative isolate overflow-hidden bg-obsidian-950 text-white">
-      {/* Atmospheric backdrop */}
+    <section className="relative isolate overflow-hidden bg-[#F8F7F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-white">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-      >
-        <div className="absolute -left-48 -top-64 h-[680px] w-[680px] rounded-full bg-electric-600/[0.12] blur-[170px]" />
-        <div className="absolute -bottom-72 right-[12%] h-[500px] w-[500px] rounded-full bg-electric-800/[0.13] blur-[150px]" />
-        <div className="brand-grid absolute inset-0 opacity-[0.04] [mask-image:linear-gradient(to_bottom,black,transparent_80%)]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      </div>
+        className="pointer-events-none absolute -right-48 -top-56 h-[560px] w-[560px] rounded-full bg-[#1265F4]/[0.055] blur-[120px] dark:bg-[#1265F4]/[0.12]"
+      />
 
       <div className="brand-container relative">
-        <div className="grid items-center gap-10 py-10 sm:py-14 lg:min-h-[760px] lg:grid-cols-12 lg:gap-8 lg:py-12 xl:min-h-[810px] xl:gap-10">
-          {/* LEFT — EDITORIAL BRAND STATEMENT */}
-          <motion.div
-            {...reveal(0.05)}
-            className="relative z-10 lg:col-span-5 lg:py-8"
-          >
-            <div className="mb-8 flex items-center gap-3 sm:mb-10">
-              <span className="relative flex h-2.5 w-2.5 items-center justify-center">
-                <span className="absolute h-full w-full rounded-full bg-gold-400/30" />
-                <span className="relative h-1.5 w-1.5 rounded-full bg-gold-400" />
+        <div className="grid items-center gap-12 py-14 sm:py-16 lg:min-h-[650px] lg:grid-cols-[1fr_0.94fr] lg:gap-12 lg:py-16 xl:gap-16">
+          <div className="relative z-10 max-w-[610px]">
+            <motion.div
+              {...enter}
+              className="mb-7 inline-flex items-center gap-3"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1265F4]/10 text-[#1265F4]">
+                <MoveUpRight size={15} />
               </span>
 
-              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-obsidian-300 sm:text-[11px]">
-                Your extended digital team
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#090A0C]/60 dark:text-white/55 sm:text-[11px]">
+                For the ideas that deserve more
               </span>
-            </div>
+            </motion.div>
 
-            <h1 className="brand-display max-w-[620px] text-[clamp(3.7rem,6.6vw,6.45rem)] leading-[0.9] tracking-[-0.08em] text-white">
-              Go far
-              <br />
-              with your
-              <br />
-              <span className="relative inline-block pb-2">
-                <span className="relative z-10 bg-gradient-to-r from-electric-300 via-electric-400 to-[#b9ceff] bg-clip-text text-transparent">
-                  projects.
+            <motion.h1
+              {...enter}
+              transition={{
+                ...enter.transition,
+                delay: 0.08,
+              }}
+              className="font-brand-display text-[clamp(3.5rem,7.2vw,6.7rem)] font-semibold leading-[0.91] tracking-[-0.075em]"
+            >
+              Go far with
+              <span className="mt-1 block">
+                your{" "}
+                <span className="relative inline-block text-[#1265F4]">
+                  project
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 290 15"
+                    className="absolute -bottom-2 left-0 w-full"
+                    fill="none"
+                  >
+                    <path
+                      d="M4 10.5C75 3 203 1.5 285 7"
+                      stroke="#F4BE28"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
-
-                <motion.span
-                  aria-hidden="true"
-                  initial={shouldReduceMotion ? false : { scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{
-                    duration: shouldReduceMotion ? 0 : 0.85,
-                    delay: shouldReduceMotion ? 0 : 0.45,
-                    ease: "easeOut",
-                  }}
-                  className="absolute bottom-0 left-1 h-1 w-[68%] origin-left rounded-full bg-gold-400 sm:h-[5px]"
-                />
+                .
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-7 max-w-[435px] text-[15px] leading-7 text-obsidian-300 sm:mt-8 sm:text-base sm:leading-8">
-              A locally outsourced partner connecting you with digital
-              marketing experts, creatives and virtual assistants—ready to
-              help you do more, build better and go further.
-            </p>
+            <motion.p
+              {...enter}
+              transition={{
+                ...enter.transition,
+                delay: 0.16,
+              }}
+              className="mt-8 max-w-[430px] text-[15px] leading-[1.85] text-[#090A0C]/65 dark:text-white/60 sm:text-[17px]"
+            >
+              You bring the ambition. We bring the people, skills and creative
+              energy to make things happen. Think of us as your extended
+              digital team.
+            </motion.p>
 
-            {/* Primary and secondary actions */}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <motion.div
+              {...enter}
+              transition={{
+                ...enter.transition,
+                delay: 0.23,
+              }}
+              className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4"
+            >
               <Link
                 href="/client"
-                className="group inline-flex min-h-[56px] items-center justify-between gap-6 rounded-xl bg-brand-electric px-5 py-3.5 text-sm font-semibold text-white shadow-[0_10px_35px_rgba(18,101,244,0.2)] transition duration-300 hover:-translate-y-0.5 hover:bg-electric-500 hover:shadow-[0_14px_40px_rgba(18,101,244,0.34)] sm:justify-center"
+                className="group inline-flex min-h-[54px] items-center gap-7 rounded-full bg-[#1265F4] px-6 text-[13px] font-semibold text-white shadow-[0_9px_24px_rgba(18,101,244,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#0D55D5] hover:shadow-[0_14px_30px_rgba(18,101,244,0.28)]"
               >
-                <span>Become a client</span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 transition-transform duration-300 group-hover:translate-x-1">
-                  <ArrowRightOutlined />
+                Start a project
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover:rotate-45">
+                  <ArrowUpRight size={17} />
                 </span>
               </Link>
 
               <Link
                 href="/services"
-                className="group inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-xl border border-white/[0.13] px-5 py-3.5 text-sm font-medium text-white/80 transition duration-300 hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
+                className="group inline-flex items-center gap-2 py-3 text-[13px] font-semibold text-[#090A0C]/75 transition-colors hover:text-[#1265F4] dark:text-white/75 dark:hover:text-[#6FA0FF]"
               >
                 Explore our services
+                <ArrowDownRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1"
+                />
               </Link>
-            </div>
+            </motion.div>
 
-            {/* Compact service signature */}
-            <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2.5 sm:mt-9">
-              {services.map((service, index) => (
-                <span
-                  key={service}
-                  className="inline-flex items-center gap-2 text-[11px] font-medium text-obsidian-300 sm:text-xs"
-                >
-                  {index > 0 && (
-                    <span className="mr-1 h-1 w-1 rounded-full bg-gold-400" />
-                  )}
-                  {service}
-                </span>
-              ))}
-            </div>
-
-            {/* One quiet reassurance */}
-            <div className="mt-8 flex items-center gap-3 border-t border-white/[0.09] pt-5 sm:mt-10 sm:pt-6">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-electric-400/20 bg-electric-400/[0.08] text-electric-300">
-                <CheckOutlined className="text-xs" />
-              </span>
-
-              <p className="text-sm leading-6 text-white/80">
-                <span className="font-semibold text-white">
-                  One partner.
-                </span>{" "}
-                More possibilities.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* RIGHT — IMMERSIVE IMAGE COMPOSITION */}
-          <motion.div
-            {...reveal(0.14)}
-            className="relative lg:col-span-7 lg:-mr-[max(0px,calc((100vw-100%)/2))]"
-          >
-            <div className="group relative min-h-[460px] overflow-hidden rounded-[22px] border border-white/[0.10] bg-obsidian-900 sm:min-h-[560px] lg:min-h-[660px] lg:rounded-r-none lg:rounded-l-[28px] xl:min-h-[710px]">
-              <Image
-                src="/images/hero.jpg"
-                alt="Creative marketing, design and digital project work"
-                fill
-                priority
-                sizes="(max-width: 1023px) 100vw, 60vw"
-                className="object-cover object-center transition-transform duration-[1200ms] ease-out group-hover:scale-[1.035]"
-              />
-
-              {/* A graduated overlay, not a dark filter over the whole photo */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-obsidian-950/90 via-obsidian-950/10 to-transparent"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-r from-obsidian-950/20 via-transparent to-transparent"
-              />
-
-              {/* Small editorial label */}
-              <div className="absolute left-5 top-5 flex items-center gap-2.5 sm:left-8 sm:top-8">
-                <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
-                <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/85 sm:text-[10px]">
-                  Ideas into impact
-                </span>
+            <motion.div
+              {...enter}
+              transition={{
+                ...enter.transition,
+                delay: 0.3,
+              }}
+              className="mt-10 flex items-center gap-4 border-t border-[#090A0C]/10 pt-5 dark:border-white/10"
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[#1265F4]" />
+                <span className="h-2 w-2 rounded-full bg-[#F4BE28]" />
+                <span className="h-2 w-2 rounded-full bg-[#E3D0D8]" />
               </div>
 
-              {/* Integrated image typography */}
-              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9 lg:p-10 xl:p-12">
-                <p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold-300">
-                  Your ambition, amplified
-                </p>
+              <p className="text-[11px] font-medium tracking-wide text-[#090A0C]/50 dark:text-white/45">
+                One partner. Multiple possibilities. Real progress.
+              </p>
+            </motion.div>
+          </div>
 
-                <h2 className="max-w-[550px] text-[clamp(2.6rem,4.5vw,4.5rem)] font-medium leading-[0.94] tracking-[-0.065em] text-white">
-                  Big ideas.
-                  <br />
-                  <span className="text-white/65">Better together.</span>
-                </h2>
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: reduceMotion ? 0 : 28,
+            }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: 0.85,
+              delay: 0.12,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="relative mx-auto w-full max-w-[570px] lg:ml-auto"
+          >
+            {/* Image frame */}
+            <div className="relative">
+              <div className="relative aspect-[1.02/1] overflow-hidden rounded-[1.6rem] bg-[#D9DCE3] shadow-[0_24px_65px_rgba(9,10,12,0.13)] sm:rounded-[2rem]">
+                <Image
+                  src="/images/hero.jpg"
+                  alt="Creative professionals collaborating on ambitious projects"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 48vw"
+                  className="object-cover transition-transform duration-700 hover:scale-[1.025]"
+                />
 
-                <div className="mt-6 flex max-w-md items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-electric-400" />
-                  <p className="text-xs leading-6 text-white/70 sm:text-sm">
-                    The right people, skills and creative energy behind your
-                    next move.
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090A0C]/65 via-[#090A0C]/5 to-[#090A0C]/10" />
+
+                <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/20 bg-[#090A0C]/25 px-3.5 py-2 text-[9px] font-semibold uppercase tracking-[0.17em] text-white backdrop-blur-md sm:left-7 sm:top-7">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#F4BE28]" />
+                  Ideas into action
+                </div>
+
+                <div className="absolute bottom-0 left-0 max-w-[72%] p-6 text-white sm:p-8">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/65">
+                    Your ambition, our expertise
+                  </p>
+                  <p className="mt-2 font-brand-display text-2xl font-medium leading-[1.08] tracking-[-0.04em] sm:text-3xl">
+                    Make more possible.
                   </p>
                 </div>
               </div>
 
-              {/* Subtle image-edge detail */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: reduceMotion ? 0 : 16,
+                }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.65,
+                  delay: 0.55,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="absolute -bottom-5 right-4 w-[205px] rounded-2xl bg-[#1265F4] p-5 text-white shadow-[0_16px_40px_rgba(18,101,244,0.25)] sm:-right-5 sm:w-[225px] sm:p-6"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/65">
+                    What we bring
+                  </span>
+                  <ArrowUpRight size={17} />
+                </div>
+
+                <div className="mt-4 space-y-2.5">
+                  {["Digital marketing", "Creative", "Virtual assistance"].map(
+                    (service) => (
+                      <div
+                        key={service}
+                        className="flex items-center gap-2.5 text-[12px] font-medium"
+                      >
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/15">
+                          <span className="h-1 w-1 rounded-full bg-[#F4BE28]" />
+                        </span>
+                        {service}
+                      </div>
+                    )
+                  )}
+                </div>
+              </motion.div>
+
               <div
                 aria-hidden="true"
-                className="absolute right-0 top-0 h-24 w-24 border-r border-t border-white/20"
+                className="absolute -left-3 -top-3 h-12 w-12 rounded-tl-[1.3rem] border-l-[4px] border-t-[4px] border-[#F4BE28] sm:-left-4 sm:-top-4"
               />
-            </div>
-
-            {/* The one playful signature element */}
-            <div className="absolute -bottom-4 right-5 z-10 flex -rotate-2 items-center gap-3 rounded-xl bg-gold-400 px-4 py-3 text-obsidian-950 shadow-[0_12px_32px_rgba(0,0,0,0.24)] transition-transform duration-300 hover:rotate-0 sm:right-8 sm:px-5 sm:py-3.5">
-              <span className="text-[10px] font-black uppercase tracking-[0.13em]">
-                Good work goes far
-              </span>
             </div>
           </motion.div>
         </div>
       </div>
     </section>
   );
-};
+}
