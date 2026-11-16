@@ -1,11 +1,11 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Check, Compass, Layers3, UsersRound, MoveUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Check, Compass, Layers3, UsersRound, MoveUpRight } from "lucide-react";
 import { homePrinciples } from "./home-data";
 import { HomeSection } from "./HomeSection";
 
-const principleIcons = [Compass, UsersRound, Layers3];
 
+const principleIcons = [Compass, UsersRound, Layers3];
 const transition = {
   duration: 0.65,
   ease: [0.22, 1, 0.36, 1] as const,
@@ -113,13 +113,6 @@ export const WhyGFA = () => {
               <MoveUpRight size={19} />
             </div>
           </div>
-
-          {/* Small corner accent */}
-          <Sparkles
-            aria-hidden="true"
-            size={20}
-            className="absolute right-9 top-[48%] text-brand-gold/60"
-          />
         </motion.div>
 
         {/* Principles column */}
