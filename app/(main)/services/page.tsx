@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { siteConfig, absoluteUrl } from "@/lib/seo";
 import { ServicesHero } from "@/components/services/Hero";
-import { ServicesOverview } from "@/components/services/Overview";
 import { DigitalCreation } from "@/components/services/DigitalCreation";
 import { DigitalExecution } from "@/components/services/DigitalExecution";
 import { VirtualAssistance } from "@/components/services/VirtualAssistance";
 import { EngagementModels } from "@/components/services/EngagementModels";
 import { ServicesCTA } from "@/components/services/CTA";
-import { OurProcess } from "@/components/services/OurProcess";
+import { AudienceSection } from "@/components/services/AudienceSection";
+import { EngagementProcess } from "@/components/services/EngagementProcess";
 
 export const metadata: Metadata = {
   title: "Digital Services | Web Design, Digital Marketing & Virtual Assistance",
@@ -149,12 +149,12 @@ export default function ServicesPage() {
       />
 
       <ServicesHero />
-      <ServicesOverview />
+      <EngagementModels />
       <DigitalCreation />
       <DigitalExecution />
       <VirtualAssistance />
-      <OurProcess />
-      <EngagementModels />
+      <AudienceSection />
+      <EngagementProcess/>
       <ServicesCTA />
     </main>
   );

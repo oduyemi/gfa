@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Check, MessageCircle, Plus } from "lucide-react";
 import Link from "next/link";
-import { HomeSection } from "./HomeSection";
+import { HomeSection } from "../home/HomeSection";
 
 
 const faqs = [
@@ -23,6 +23,11 @@ const faqs = [
       "Yes. We begin by understanding your goals and context, then explore an approach that makes sense for the work you want to accomplish.",
   },
   {
+    question: "Do you have an approval process? What's that all about?",
+    answer:
+      "Yes, we do. Our straightforward four-stage process is designed to keep you informed, involved, and moving in the right direction. We start by discovering your goals and understanding your needs, connect you with relevant people and capabilities, collaborate to develop an approved service plan and agree on next steps, then move forward with implementation. Throughout the process, we keep you in the loop. Four stages, one shared goal: turning the right ideas into meaningful action.",
+  },
+  {
     question: "How do we get started?",
     answer:
       "Use the contact page or client enquiry link to tell us a little about your project. We'll use that information to guide the next conversation.",
@@ -37,7 +42,7 @@ export const FAQSection = () => {
 
   return (
     <HomeSection
-      eyebrow="A few helpful answers"
+      eyebrow="Frequently Asked Questions"
       title={
         <>
           Questions worth{" "}
@@ -111,7 +116,7 @@ export const FAQSection = () => {
 
           <div className="relative mt-12 border-t border-white/15 pt-6">
             <Link
-              href="/contact"
+              href="/contact/#contact-form"
               className="group/button inline-flex min-h-[52px] w-full items-center justify-between gap-4 rounded-full bg-brand-gold px-5 text-sm font-bold text-brand-obsidian transition-all duration-300 hover:-translate-y-1 hover:bg-white sm:w-auto sm:min-w-[220px]"
             >
               <span>Talk to our team</span>
@@ -140,7 +145,7 @@ export const FAQSection = () => {
                 Before we begin
               </p>
               <h3 className="mt-2 font-brand-display text-2xl font-semibold tracking-[-0.045em] text-foreground sm:text-3xl">
-                The things you might be wondering.
+                Take a look at our frequently asked questions.
               </h3>
             </div>
 

@@ -2,7 +2,7 @@
 import { ThemeProvider as NextThemeProvider } from "@teispace/next-themes";
 import type { ReactNode } from "react";
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   return (
     <NextThemeProvider
       attribute="class"

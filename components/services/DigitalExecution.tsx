@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import { useState } from "react";
+import { ContactDialog } from "@/dialogs/contact-dialog";import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
@@ -85,6 +86,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export const DigitalExecution = () => {
   const shouldReduceMotion = useReducedMotion();
+  const [dialogType, setDialogType] = useState<"creation" | "execution" | "assistance" | "general" | null>(null);
 
   const reveal = (delay = 0) => ({
     initial: shouldReduceMotion ? false : { opacity: 0, y: 24 },
@@ -137,12 +139,10 @@ export const DigitalExecution = () => {
           </div>
         </motion.div>
 
-        {/* Strategy feature */}
         <motion.div
           {...reveal(0.05)}
           className="relative mt-14 overflow-hidden bg-obsidian-900 text-white sm:mt-20"
         >
-          {/* Atmospheric background */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-24 -top-40 size-[34rem] rounded-full bg-brand-electric/20 blur-[110px]"
@@ -153,7 +153,6 @@ export const DigitalExecution = () => {
           />
 
           <div className="relative grid lg:grid-cols-[1fr_0.9fr]">
-            {/* Main statement */}
             <div className="flex flex-col justify-between p-7 sm:p-10 lg:p-14">
               <div>
                 <div className="flex items-center gap-3">
@@ -277,7 +276,6 @@ export const DigitalExecution = () => {
             </p>
           </motion.div>
 
-          {/* Directory heading */}
           <div className="hidden grid-cols-[4.5rem_1fr_1.15fr] gap-6 border-y border-border py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground md:grid">
             <span>Ref.</span>
             <span>Service</span>
@@ -294,7 +292,6 @@ export const DigitalExecution = () => {
                   {...reveal(index * 0.045)}
                   className="group relative grid gap-5 border-b border-border py-7 transition-colors duration-300 hover:bg-surface-subtle/70 sm:py-8 md:grid-cols-[4.5rem_1fr_1.15fr] md:items-center md:gap-6 md:px-4"
                 >
-                  {/* Number */}
                   <div className="flex items-center justify-between md:block">
                     <span className="font-brand-display text-2xl font-semibold tracking-[-0.05em] text-foreground/20 transition-colors group-hover:text-brand-electric">
                       {service.number}
@@ -305,7 +302,6 @@ export const DigitalExecution = () => {
                     </div>
                   </div>
 
-                  {/* Service name */}
                   <div className="flex items-start gap-4">
                     <div className="hidden size-11 shrink-0 items-center justify-center rounded-full bg-brand-electric/[0.07] text-brand-electric transition-all duration-300 group-hover:bg-brand-electric group-hover:text-white md:flex">
                       <Icon size={19} strokeWidth={1.7} />
@@ -322,7 +318,6 @@ export const DigitalExecution = () => {
                     </div>
                   </div>
 
-                  {/* Description and tags */}
                   <div>
                     <p className="max-w-xl text-sm leading-7 text-muted-foreground">
                       {service.description}
@@ -350,13 +345,11 @@ export const DigitalExecution = () => {
           </div>
         </div>
 
-        {/* Retainer engagement */}
         <motion.div
           {...reveal()}
           className="relative mt-20 overflow-hidden bg-surface-subtle sm:mt-24 lg:mt-28"
         >
           <div className="grid lg:grid-cols-[0.85fr_1.15fr]">
-            {/* Duration statement */}
             <div className="relative flex flex-col justify-between overflow-hidden bg-brand-gold p-7 text-obsidian-900 sm:p-10 lg:p-12">
               <div
                 aria-hidden="true"
@@ -399,7 +392,6 @@ export const DigitalExecution = () => {
               </div>
             </div>
 
-            {/* Engagement explanation */}
             <div className="flex flex-col justify-center bg-card p-7 sm:p-10 lg:p-12">
               <p className="brand-eyebrow">Beyond one-off tasks</p>
 
@@ -436,8 +428,9 @@ export const DigitalExecution = () => {
                 ))}
               </div>
 
-              <Link
-                href="/contact"
+              <button
+                type="button"
+                onClick={() => setDialogType("execution")}
                 className="group mt-8 inline-flex w-fit items-center gap-4 bg-obsidian-900 px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-brand-electric"
               >
                 Discuss a growth partnership
@@ -445,34 +438,15 @@ export const DigitalExecution = () => {
                   size={17}
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
-              </Link>
+              </button>
             </div>
           </div>
         </motion.div>
-
-        {/* Closing statement */}
-        {/* <motion.div
-          {...reveal()}
-          className="mt-12 flex flex-col gap-4 border-t border-border pt-7 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <p className="max-w-xl text-sm leading-7 text-muted-foreground">
-            Not sure which area needs attention first? Let's start
-            with a conversation about where your business is and
-            where you want it to go.
-          </p>
-
-          <Link
-            href="/contact"
-            className="group inline-flex w-fit shrink-0 items-center gap-2 text-sm font-semibold text-brand-electric"
-          >
-            Talk to our team
-            <ArrowUpRight
-              size={17}
-              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
-          </Link>
-        </motion.div> */}
       </div>
+      <ContactDialog
+      type={dialogType}
+      onClose={() => setDialogType(null)}
+    />
     </section>
   );
 };

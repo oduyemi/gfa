@@ -4,7 +4,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Compass, Layers3, MoveUpRight, UsersRound } from "lucide-react";
 import { HomeSection } from "./HomeSection";
 
-
 const connections = [
   {
     number: "01",
@@ -22,8 +21,8 @@ const connections = [
   },
   {
     number: "03",
-    title: "Opportunity",
-    description: "New possibilities and a clearer way forward.",
+    title: "Management",
+    description: "Simplified processes and a clearer way forward.",
     icon: Compass,
     accent: "rose",
   },
@@ -34,7 +33,7 @@ const reveal = {
   visible: { opacity: 1, y: 0 },
 };
 
-export const HomeIntro = () => {
+export const GFAPerspective = () => {
   const reduceMotion = useReducedMotion();
 
   const revealTransition = {
@@ -44,40 +43,9 @@ export const HomeIntro = () => {
 
   return (
     <HomeSection
-      id="about-GFA"
+      id="gfa-perspective"
       className="relative overflow-hidden bg-background"
     >
-      {/* Section introduction */}
-      <motion.div
-        initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{
-          duration: reduceMotion ? 0 : 0.65,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className="relative mb-12 max-w-3xl lg:mb-16"
-      >
-        <div className="flex items-center gap-3">
-          <span className="h-[2px] w-9 rounded-full bg-brand-gold" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            A little about us
-          </span>
-        </div>
-
-        <h2 className="mt-6 max-w-3xl font-brand-display text-[clamp(2.5rem,5.5vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.07em] text-foreground">
-          Good work takes more than a good idea.
-          <span className="mt-2 block brand-gradient-text">
-            It takes the right people, skills and support.
-          </span>
-        </h2>
-
-        <p className="mt-6 max-w-2xl text-sm leading-[1.9] text-muted-foreground sm:text-base">
-          That&apos;s where GFA comes in. We bring the right expertise and people
-          around your goals, helping you turn ideas into meaningful progress.
-        </p>
-      </motion.div>
-
       <div className="relative grid gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:gap-16 xl:gap-24">
         {/* Editorial statement */}
         <motion.div
@@ -89,7 +57,6 @@ export const HomeIntro = () => {
           className="relative"
         >
           <div className="flex items-center gap-3">
-            <span className="h-[2px] w-9 rounded-full bg-brand-gold" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
               The GFA perspective
             </span>
@@ -97,15 +64,16 @@ export const HomeIntro = () => {
 
           <h3 className="mt-7 max-w-lg font-brand-display text-[clamp(2.65rem,5vw,4.5rem)] font-semibold leading-[0.99] tracking-[-0.075em] text-foreground">
             You bring the
-            <span className="block text-brand-electric">ambition.</span>
+            <span className="block text-brand-electric">goal.</span>
             <span className="mt-2 block text-foreground/65">
               We connect the dots.
             </span>
           </h3>
 
           <p className="mt-7 max-w-md text-[14px] leading-[1.9] text-muted-foreground sm:text-[15px]">
-            Progress doesn&apos;t have to happen alone. We bring the right
-            combination of people, skills and support around your goals.
+            Progress doesn&apos;t have to happen alone. We bring the right blend of
+            people, skills and support needed for success &#8208; as well as
+            having processes designed to make things easier to manage.
           </p>
 
           <Link
@@ -181,7 +149,6 @@ export const HomeIntro = () => {
 
             {/* Connection sequence */}
             <div className="relative">
-              {/* Connector rail */}
               <div
                 aria-hidden="true"
                 className="absolute bottom-[2.1rem] left-[23px] top-[2.1rem] w-px bg-gradient-to-b from-brand-electric/60 via-brand-gold/60 to-[#E3D0D8]"
@@ -218,10 +185,7 @@ export const HomeIntro = () => {
                         opacity: 0,
                         x: reduceMotion ? 0 : 18,
                       }}
-                      whileInView={{
-                        opacity: 1,
-                        x: 0,
-                      }}
+                      whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, amount: 0.5 }}
                       transition={{
                         duration: reduceMotion ? 0 : 0.5,
@@ -294,7 +258,6 @@ export const HomeIntro = () => {
             </div>
           </div>
 
-          {/* Floating index detail */}
           <div className="absolute -bottom-4 right-6 hidden items-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 shadow-premium-sm sm:flex">
             <span className="font-mono text-[10px] font-bold text-brand-electric">
               GFA
@@ -308,4 +271,4 @@ export const HomeIntro = () => {
       </div>
     </HomeSection>
   );
-}
+};

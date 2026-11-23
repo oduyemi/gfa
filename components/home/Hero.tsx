@@ -59,7 +59,7 @@ export const Hero = () => {
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 290 15"
-                    className="absolute -bottom-2 left-0 w-full"
+                    className="absolute -bottom-7 left-0 w-full"
                     fill="none"
                   >
                     <path
@@ -96,7 +96,7 @@ export const Hero = () => {
               className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4"
             >
               <Link
-                href="/client"
+                href="/contact/#contact-form"
                 className="group inline-flex min-h-[54px] items-center gap-7 rounded-full bg-[#1265F4] px-6 text-[13px] font-semibold text-white shadow-[0_9px_24px_rgba(18,101,244,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#0D55D5] hover:shadow-[0_14px_30px_rgba(18,101,244,0.28)]"
               >
                 Start a project

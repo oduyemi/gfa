@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -18,6 +19,7 @@ import {
   CalendarCheck,
   Inbox,
 } from "lucide-react";
+import { ContactDialog } from "@/dialogs/contact-dialog";
 
 const assistanceServices = [
   {
@@ -125,6 +127,8 @@ const accentStyles = {
 
 export const VirtualAssistance = () => {
   const shouldReduceMotion = useReducedMotion();
+  const [dialogType, setDialogType] = useState<"creation" | "execution" | "assistance" | "general" | null>(null);
+
 
   const reveal = {
     initial: shouldReduceMotion ? false : { opacity: 0, y: 22 },
@@ -543,8 +547,9 @@ export const VirtualAssistance = () => {
                   </p>
                 </div>
 
-                <Link
-                  href="/contact?service=virtual-assistance"
+                <button
+                  type="button"
+                  onClick={() => setDialogType("assistance")}
                   className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-full bg-[#F4BE28] px-5 py-3 text-xs font-bold text-[#090A0C] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white"
                 >
                   Discuss your support needs
@@ -552,12 +557,16 @@ export const VirtualAssistance = () => {
                     size={15}
                     className="transition-transform duration-300 group-hover:translate-x-1"
                   />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
+      <ContactDialog
+      type={dialogType}
+      onClose={() => setDialogType(null)}
+    />
     </section>
   );
 };

@@ -162,7 +162,7 @@ export const Header = () => {
               </button>
 
               <Link
-                href="/client"
+                href="/become-a-client"
                 className="group hidden h-11 items-center gap-2 rounded-full bg-[#1265F4] px-5 text-[13px] font-bold text-white shadow-[0_5px_15px_rgba(18,101,244,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0756DF] hover:shadow-[0_8px_22px_rgba(18,101,244,0.3)] sm:inline-flex"
               >
                 Become a client

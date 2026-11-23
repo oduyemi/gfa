@@ -18,6 +18,8 @@ import {
   AudioLines,
 } from "lucide-react";
 import { HomeSection } from "./HomeSection";
+import { useState } from "react";
+import { ContactDialog } from "@/dialogs/contact-dialog";
 
 const services = [
   {
@@ -198,6 +200,8 @@ const artwork = {
 
 export const ServicesOverview = () => {
   const reduceMotion = useReducedMotion();
+  const [dialogType, setDialogType] = useState<"creation" | "execution" | "assistance" | "general" | null>(null);
+
 
   return (
     <HomeSection
@@ -391,8 +395,9 @@ export const ServicesOverview = () => {
             </p>
           </div>
 
-          <Link
-            href="/contact"
+          <button
+              type="button"
+              onClick={() => setDialogType("general")}
             className="group/button inline-flex min-h-12 w-fit shrink-0 items-center gap-5 rounded-full bg-brand-electric px-6 text-xs font-bold text-white shadow-[0_6px_18px_rgba(18,101,244,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-electric-700 hover:shadow-[0_9px_24px_rgba(18,101,244,0.25)]"
           >
             Start a conversation
@@ -402,9 +407,14 @@ export const ServicesOverview = () => {
                 className="transition-transform duration-300 group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5"
               />
             </span>
-          </Link>
+          </button>
         </div>
       </div>
+
+      <ContactDialog
+      type={dialogType}
+      onClose={() => setDialogType(null)}
+      />
     </HomeSection>
   );
 };

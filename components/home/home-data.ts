@@ -51,12 +51,12 @@ export const homeSteps = [
   {
     number: "03",
     title: "Collaborate",
-    description: "Together, we shape a focused plan and agree on what happens next.",
+    description: "Once approved, we curate a service plan, initiate onboarding and agree next actions",
   },
   {
     number: "04",
     title: "Move forward",
-    description: "We help turn the agreed direction into meaningful action.",
+    description: "We help turn the agreed direction into meaningful action“, ensuring you’re in the loop throughout the process.",
   },
 ];
 

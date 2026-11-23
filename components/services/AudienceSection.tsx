@@ -1,8 +1,8 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, MoveUpRight } from "lucide-react";
-import { homeAudiences } from "./home-data";
-import { HomeSection } from "./HomeSection";
+import { homeAudiences } from "../home/home-data";
+import { HomeSection } from "../home/HomeSection";
 
 
 export const AudienceSection = () => {

@@ -1,6 +1,6 @@
-
 "use client";
-
+import { useState } from "react";
+import { ContactDialog } from "@/dialogs/contact-dialog";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
@@ -14,7 +14,6 @@ import {
   Search,
   Video,
   Wallet,
-  Sparkles,
   MoveUpRight,
 } from "lucide-react";
 
@@ -70,6 +69,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export const DigitalCreation = () => {
   const reduceMotion = useReducedMotion();
+  const [dialogType, setDialogType] = useState<"creation" | "execution" | "assistance" | "general" | null>(null);
 
   const reveal = {
     initial: reduceMotion ? false : { opacity: 0, y: 24 },
@@ -119,10 +119,6 @@ export const DigitalCreation = () => {
             </p>
 
             <div className="mt-7 flex items-center gap-3 border-t border-border pt-5">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-gold/15 text-[#A77C0D] dark:text-brand-gold">
-                <Sparkles size={18} />
-              </span>
-
               <div>
                 <p className="text-xs font-bold text-foreground">
                   Design. Build. Bring your ideas to life.
@@ -135,14 +131,11 @@ export const DigitalCreation = () => {
           </div>
         </motion.div>
 
-        {/* CREATIVE SHOWCASE */}
         <motion.div
           {...reveal}
           className="mt-14 overflow-hidden rounded-[1.8rem] bg-obsidian-900 text-white shadow-premium-md sm:mt-20 lg:mt-24 lg:rounded-[2.2rem]"
         >
           <div className="grid lg:grid-cols-[1.12fr_0.88fr]">
-
-            {/* Image composition */}
             <div className="group relative min-h-[390px] overflow-hidden sm:min-h-[490px] lg:min-h-[590px]">
               <Image
                 src="/images/services/creative_work.jpg"
@@ -184,7 +177,6 @@ export const DigitalCreation = () => {
               </span>
             </div>
 
-            {/* Showcase information */}
             <div className="relative flex flex-col justify-between p-7 sm:p-10 lg:p-12 xl:p-14">
               <div
                 aria-hidden="true"
@@ -230,7 +222,6 @@ export const DigitalCreation = () => {
                 </div>
               </div>
 
-              {/* Project engagement */}
               <div className="relative mt-12 border-t border-white/15 pt-7">
                 <div className="flex items-center gap-3">
                   <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-electric text-white">
@@ -258,7 +249,7 @@ export const DigitalCreation = () => {
                   </div>
 
                   <Link
-                    href="/contact"
+                    href="/contact/#contact-form"
                     className="group inline-flex min-h-12 items-center justify-center gap-4 rounded-full bg-white px-6 text-sm font-bold text-obsidian-900 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-gold"
                   >
                     Start a project
@@ -273,7 +264,6 @@ export const DigitalCreation = () => {
           </div>
         </motion.div>
 
-        {/* SERVICE CATALOGUE */}
         <div className="mt-24 sm:mt-28 lg:mt-32">
           <motion.div
             {...reveal}
@@ -281,7 +271,6 @@ export const DigitalCreation = () => {
           >
             <div>
               <p className="brand-eyebrow mb-4">What we can create</p>
-
               <h3 className="max-w-2xl font-brand-display text-3xl font-semibold leading-[1.05] tracking-[-0.055em] text-foreground sm:text-4xl lg:text-5xl">
                 The skills to bring it all together.
               </h3>
@@ -293,7 +282,6 @@ export const DigitalCreation = () => {
             </p>
           </motion.div>
 
-          {/* Editorial numbered list */}
           <div className="border-t border-border">
             {creativeServices.map((service, index) => {
               const Icon = service.icon;
@@ -311,7 +299,6 @@ export const DigitalCreation = () => {
                   }}
                   className="group grid gap-5 border-b border-border py-7 transition-colors duration-300 hover:bg-surface-subtle/60 sm:py-9 lg:grid-cols-[70px_1fr_1.1fr_40px] lg:items-center lg:gap-8 lg:py-10 lg:px-5"
                 >
-                  {/* Number and icon */}
                   <div className="flex items-center gap-4 lg:block">
                     <span className="font-mono text-xs font-semibold tabular-nums text-muted-foreground">
                       {service.number}
@@ -326,7 +313,6 @@ export const DigitalCreation = () => {
                     </span>
                   </div>
 
-                  {/* Title */}
                   <div>
                     <p className="mb-2 hidden text-[9px] font-bold uppercase tracking-[0.17em] text-brand-electric lg:block">
                       {service.category}
@@ -337,7 +323,6 @@ export const DigitalCreation = () => {
                     </h4>
                   </div>
 
-                  {/* Description and examples */}
                   <div>
                     <p className="max-w-xl text-sm leading-7 text-muted-foreground">
                       {service.description}
@@ -355,7 +340,6 @@ export const DigitalCreation = () => {
                     </div>
                   </div>
 
-                  {/* Decorative action */}
                   <div className="hidden justify-end lg:flex">
                     <span className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition-all duration-300 group-hover:border-brand-electric group-hover:bg-brand-electric group-hover:text-white">
                       <ArrowUpRight size={16} />
@@ -367,7 +351,6 @@ export const DigitalCreation = () => {
           </div>
         </div>
 
-        {/* PROJECT ENGAGEMENT */}
         <motion.div
           {...reveal}
           className="relative mt-14 overflow-hidden rounded-[1.65rem] border border-brand-electric/20 bg-brand-electric/[0.045] sm:mt-16"
@@ -404,19 +387,24 @@ export const DigitalCreation = () => {
               </div>
             </div>
 
-            <Link
-              href="/contact"
-              className="group inline-flex min-h-11 shrink-0 items-center gap-3 self-start text-sm font-bold text-brand-electric transition-all hover:gap-4 sm:self-center"
+            <button
+              type="button"
+              onClick={() => setDialogType("creation")}
+              className="group inline-flex min-h-11 shrink-0 items-center gap-3 self-start text-sm font-bold text-brand-electric transition-all hover:gap-4 sm:self-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-electric focus-visible:ring-offset-4"
             >
               Discuss your idea
               <ArrowDownRight
                 size={18}
                 className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:translate-y-0.5"
               />
-            </Link>
+            </button>
           </div>
         </motion.div>
       </div>
+      <ContactDialog
+      type={dialogType}
+      onClose={() => setDialogType(null)}
+    />
     </section>
   );
 };

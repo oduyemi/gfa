@@ -1,8 +1,8 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Check, Compass, Layers3, UsersRound, MoveUpRight } from "lucide-react";
-import { homePrinciples } from "./home-data";
-import { HomeSection } from "./HomeSection";
+import { homePrinciples } from "../home/home-data";
+import { HomeSection } from "../home/HomeSection";
 
 
 const principleIcons = [Compass, UsersRound, Layers3];

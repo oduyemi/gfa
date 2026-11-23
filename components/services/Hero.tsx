@@ -137,7 +137,7 @@ export const ServicesHero = () => {
               </Link>
 
               <Link
-                href="/contact"
+                href="/contact/#contact-form"
                 className="group inline-flex min-h-13 items-center justify-center gap-2 px-4 text-sm font-semibold text-foreground transition-colors hover:text-brand-electric"
               >
                 Let's discuss your project
