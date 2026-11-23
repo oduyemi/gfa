@@ -43,6 +43,7 @@ const services = [
     accentSoft: "rgba(244, 190, 40, 0.12)",
     accentText: "text-[#B1840B] dark:text-[#F4BE28]",
     artwork: "creative",
+    href: "/services/#digital-creation"
   },
   {
     number: "02",
@@ -65,6 +66,7 @@ const services = [
     accentSoft: "rgba(18, 101, 244, 0.10)",
     accentText: "text-[#1265F4] dark:text-[#6FA0FF]",
     artwork: "marketing",
+    href: "/services/#digital-execution"
   },
   {
     number: "03",
@@ -88,6 +90,7 @@ const services = [
     accentSoft: "rgba(227, 208, 216, 0.30)",
     accentText: "text-[#A66F84] dark:text-[#E3D0D8]",
     artwork: "assistance",
+    href: "/services/#virtual-assistance"
   },
 ];
 
@@ -252,13 +255,11 @@ export const ServicesOverview = () => {
               style={{ "--service-accent": service.accent } as React.CSSProperties}
               className="group relative flex flex-col overflow-hidden rounded-[1.65rem] border border-border bg-card p-5 shadow-premium-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--service-accent)]/40 hover:shadow-premium-md sm:p-6"
             >
-              {/* Accent line */}
               <div
                 className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
                 style={{ backgroundColor: service.accent }}
               />
 
-              {/* Card identity */}
               <div className="flex items-center justify-between">
                 <span className={`font-mono text-[10px] font-bold tracking-[0.16em] ${service.accentText}`}>
                   {service.number} <span className="opacity-50">/</span> {service.label}
@@ -272,12 +273,10 @@ export const ServicesOverview = () => {
                 </span>
               </div>
 
-              {/* Visual */}
               <div className="mt-5 overflow-hidden rounded-[1.1rem] border border-border/70 bg-surface-subtle">
                 <Artwork />
               </div>
 
-              {/* Heading and description */}
               <div className="mt-6">
                 <h3 className="max-w-[260px] font-brand-display text-[1.55rem] font-bold leading-[1.08] tracking-[-0.055em] text-foreground">
                   {service.title}
@@ -292,7 +291,6 @@ export const ServicesOverview = () => {
                 </p>
               </div>
 
-              {/* Service list */}
               <div className="mt-6 border-t border-border pt-5">
                 <div className="mb-4 flex items-center justify-between">
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -321,7 +319,6 @@ export const ServicesOverview = () => {
                 </ul>
               </div>
 
-              {/* Engagement details */}
               <div className="mt-auto pt-7">
                 <div className="rounded-xl bg-surface-subtle p-4">
                   <div className="flex items-start gap-3">
@@ -348,7 +345,7 @@ export const ServicesOverview = () => {
                 </div>
 
                 <Link
-                  href="/services"
+                  href={service.href}
                   aria-label={`Explore ${service.title}`}
                   className={`mt-5 inline-flex items-center gap-2 text-xs font-bold text-foreground transition-colors hover:text-brand-electric ${service.accentText}`}
                 >
