@@ -48,20 +48,52 @@ export const DigitalCreationForm = () => {
     );
   };
 
+  
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
-
+    if (isSubmitting) return;
     if (selectedServices.length === 0) {
       setError("Please select at least one creative service.");
       return;
     }
 
-    setIsSubmitting(true);
+    const fullname = formData.fullname.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.trim();
+    const message = formData.message.trim();
+    if (!fullname || !email || !phone || !message) {
+      setError("Please complete all required fields.");
+      return;
+    }
 
+    if (fullname.length > 120) {
+      setError("Your name must not exceed 120 characters.");
+      return;
+    }
+
+    if (message.length < 10) {
+      setError("Your project message must contain at least 10 characters.");
+      return;
+    }
+
+    if (message.length > 10000) {
+      setError("Your message is too long. Please shorten it and try again.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const payload = {
-        ...formData,
+        fullname,
+        email,
+        phone,
+        company: formData.company.trim(),
+        projectName: formData.projectName.trim(),
+        budget: formData.budget,
+        timeline: formData.timeline,
+        subject: formData.subject.trim(),
+        message,
         service: "Digital Creation",
         creationServices: selectedServices,
       };
@@ -70,15 +102,16 @@ export const DigitalCreationForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.success) {
         throw new Error(
-          result.message || "Something went wrong. Please try again."
+          result?.message ||
+            "We couldn't submit your enquiry. Please try again."
         );
       }
 
@@ -89,7 +122,7 @@ export const DigitalCreationForm = () => {
       setError(
         err instanceof Error
           ? err.message
-          : "We couldn't submit your enquiry. Please try again."
+          : "Something went wrong. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -381,6 +414,7 @@ export const DigitalCreationForm = () => {
           <button
             type="submit"
             disabled={isSubmitting || selectedServices.length === 0}
+            aria-busy={isSubmitting}
             className="inline-flex min-h-14 shrink-0 items-center justify-center gap-3 rounded-full bg-brand-electric px-7 text-sm font-semibold text-white transition hover:bg-electric-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? (

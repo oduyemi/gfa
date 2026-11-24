@@ -1,20 +1,29 @@
-
 "use client";
-
 import { useState } from "react";
 
+
 export type SubmissionStatus = "idle" | "loading" | "success" | "error";
+
+
+interface SubmissionResponse {
+  success?: boolean;
+  message?: string;
+  error?: string;
+}
+
+
+
 
 export function useContactSubmission() {
   const [status, setStatus] = useState<SubmissionStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function submit(payload: Record<string, unknown>) {
+  async function submit(payload: Record<string, unknown>): Promise<boolean> {
     setStatus("loading");
     setErrorMessage("");
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/enquiry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,11 +31,15 @@ export function useContactSubmission() {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json().catch(() => null);
+      const data: SubmissionResponse | null = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         throw new Error(
-          data?.message || "Unable to submit your enquiry."
+          data?.message ||
+            data?.error ||
+            "Unable to submit your enquiry. Please try again."
         );
       }
 

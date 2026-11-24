@@ -1,6 +1,4 @@
-
 import mongoose, { Schema, type Document, type Model, Types } from "mongoose";
-
 
 
 export enum EnquiryService {

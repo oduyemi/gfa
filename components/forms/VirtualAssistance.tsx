@@ -1,14 +1,6 @@
-
 "use client";
-
 import { useState } from "react";
-import { useContactSubmission } from "@/hooks/useContactSubmission";
-import {
-  FormField,
-  inputClass,
-  budgetOptions,
-  timelineOptions,
-} from "@/utils/contact-form";
+import { FormField, inputClass, budgetOptions, timelineOptions } from "@/utils/contact-form";
 import {
   ArrowRight,
   Check,
@@ -21,6 +13,9 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
+
+type SubmissionStatus = "idle" | "loading" | "success" | "error";
+
 
 const supportTasks = [
   {
@@ -96,8 +91,10 @@ const fieldClass = `${inputClass} rounded-xl border-border bg-background transit
 const sectionHeadingClass =
   "font-brand-display text-xl font-semibold tracking-tight text-foreground";
 
+
 export function VirtualAssistanceForm() {
-  const { status, errorMessage, submit } = useContactSubmission();
+  const [status, setStatus] = useState<SubmissionStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [taskError, setTaskError] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -108,39 +105,76 @@ export function VirtualAssistanceForm() {
 
     const selectedTasks = formData.getAll("supportTasks") as string[];
 
-    // At least one support task is required by the Enquiry model.
+    // Validate required support tasks.
     if (selectedTasks.length === 0) {
       setTaskError("Please select at least one area where you need support.");
       return;
     }
 
     setTaskError("");
+    setErrorMessage("");
+    setStatus("loading");
 
     const payload = {
       fullname: formData.get("fullname"),
       email: formData.get("email"),
       phone: formData.get("phone"),
+
       company: formData.get("company") || undefined,
 
+      // Must match EnquiryService in enquiry.model.ts.
       service: "Managed Virtual Assistance",
 
       supportTasks: selectedTasks,
+
       supportType: formData.get("supportType"),
+
       hours: formData.get("hours") || undefined,
 
       budget: formData.get("budget") || undefined,
+
       timeline: formData.get("timeline") || undefined,
+
       subject: formData.get("subject") || undefined,
+
       message: formData.get("message"),
     };
 
-    await submit(payload);
+    try {
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || "Unable to submit your enquiry. Please try again."
+        );
+      }
+
+      setStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error("Virtual assistance enquiry error:", error);
+
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
+      );
+
+      setStatus("error");
+    }
   }
 
   if (status === "success") {
     return <SuccessMessage />;
   }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
       {/* 01 — Contact details */}
@@ -428,9 +462,8 @@ export function VirtualAssistanceForm() {
             </p>
           </div>
         </div>
-
+        
         <SubmitButton loading={status === "loading"} />
-
         <p className="mt-4 text-center text-xs text-muted-foreground">
           By submitting, you're starting a conversation with Go Far Agency.
         </p>

@@ -1,16 +1,14 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent } from "react";
 import { ArrowRight, CheckCircle2, LoaderCircle, MessageCircle } from "lucide-react";
+import { useContactSubmission } from "@/hooks/useContactSubmission";
 
-
-type FormStatus = "idle" | "loading" | "success" | "error";
 const inputClass = "w-full rounded-xl border border-border bg-background px-4 py-3.5 text-sm text-foreground outline-none transition-all duration-200 placeholder:text-muted-foreground/60 hover:border-brand-electric/30 focus:border-brand-electric focus:ring-4 focus:ring-brand-electric/10";
 const labelClass = "mb-2 block text-sm font-semibold text-foreground";
 
-export const GeneralContactForm = () => {
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [error, setError] = useState("");
 
+export const GeneralContactForm = () => {
+  const { status, errorMessage, submit, reset } = useContactSubmission();
   const [form, setForm] = useState({
     fullname: "",
     email: "",
@@ -25,35 +23,18 @@ export const GeneralContactForm = () => {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "loading") return;
+    const success = await submit({
+      fullname: form.fullname,
+      email: form.email,
+      phone: form.phone,
+      service: "General Enquiry",
+      serviceInterest: "I'm not sure yet",
+      subject: form.subject.trim() || "General enquiry",
+      message: form.message,
+    });
 
-    setStatus("loading");
-    setError("");
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullname: form.fullname,
-          email: form.email,
-          phone: form.phone,
-          topic: "General",
-          subject: form.subject || "General enquiry",
-          message: form.message,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message || "Something went wrong. Please try again.",
-        );
-      }
-
-      setStatus("success");
+    if (success) {
       setForm({
         fullname: "",
         email: "",
@@ -61,13 +42,6 @@ export const GeneralContactForm = () => {
         subject: "",
         message: "",
       });
-    } catch (err) {
-      setStatus("error");
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to send your enquiry. Please try again.",
-      );
     }
   }
 
@@ -97,10 +71,7 @@ export const GeneralContactForm = () => {
 
           <button
             type="button"
-            onClick={() => {
-              setStatus("idle");
-              setError("");
-            }}
+            onClick={reset}
             className="group mt-8 inline-flex items-center gap-3 rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground transition-all hover:border-brand-electric/40 hover:text-brand-electric"
           >
             Send another message
@@ -158,6 +129,7 @@ export const GeneralContactForm = () => {
               name="fullname"
               autoComplete="name"
               required
+              maxLength={120}
               value={form.fullname}
               onChange={(e) => updateField("fullname", e.target.value)}
               placeholder="Your full name"
@@ -228,6 +200,7 @@ export const GeneralContactForm = () => {
           <input
             id="general-subject"
             name="subject"
+            maxLength={500}
             value={form.subject}
             onChange={(e) => updateField("subject", e.target.value)}
             placeholder="What would you like to discuss?"
@@ -246,6 +219,7 @@ export const GeneralContactForm = () => {
             required
             rows={5}
             minLength={10}
+            maxLength={10000}
             value={form.message}
             onChange={(e) => updateField("message", e.target.value)}
             placeholder="Share a question, an idea, a challenge, or simply tell us what's on your mind..."
@@ -256,6 +230,7 @@ export const GeneralContactForm = () => {
             <p className="text-xs leading-5 text-muted-foreground">
               A few sentences are more than enough to get us started.
             </p>
+
             <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
               {form.message.length} characters
             </span>
@@ -270,7 +245,7 @@ export const GeneralContactForm = () => {
           className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3.5 text-sm text-red-600 dark:text-red-400"
         >
           <MessageCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          <p className="leading-6">{error}</p>
+          <p className="leading-6">{errorMessage}</p>
         </div>
       )}
 
@@ -313,7 +288,7 @@ export const GeneralContactForm = () => {
       </div>
     </form>
   );
-}
+};
 
 function SectionHeading({
   number,

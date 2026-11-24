@@ -1,4 +1,5 @@
 "use client";
+import { useState, type FormEvent } from "react";
 import { useContactSubmission } from "@/hooks/useContactSubmission";
 import { FormField, inputClass, budgetOptions, timelineOptions } from "@/utils/contact-form";
 import { ArrowRight, Check, CheckCircle2, LoaderCircle, MessageSquareText, Target, TrendingUp, UserRound } from "lucide-react";
@@ -29,27 +30,90 @@ const fieldClass = `${inputClass} rounded-xl border-border bg-background transit
 const sectionHeadingClass = "font-brand-display text-xl font-semibold tracking-tight text-foreground";
 
 
-export function DigitalExecutionForm() {
+
+export const DigitalExecutionForm = () => {
   const { status, errorMessage, submit } = useContactSubmission();
+  const [validationError, setValidationError] = useState("");
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setValidationError("");
+    if (status === "loading") return;
 
-    const formData = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+
+    const selectedGoals = formData
+      .getAll("goals")
+      .filter((value): value is string => typeof value === "string");
+
+    const selectedChannels = formData
+      .getAll("channels")
+      .filter((value): value is string => typeof value === "string");
+
+    const businessStage = formData.get("businessStage");
+
+    // Validate business goals.
+    if (selectedGoals.length === 0) {
+      setValidationError(
+        "Please select at least one business goal."
+      );
+      return;
+    }
+
+    // Validate marketing channels.
+    if (selectedChannels.length === 0) {
+      setValidationError(
+        "Please select at least one marketing channel."
+      );
+      return;
+    }
+
+    // "Not currently using any" must be selected alone.
+    if (
+      selectedChannels.includes("Not currently using any") &&
+      selectedChannels.length > 1
+    ) {
+      setValidationError(
+        '"Not currently using any" cannot be combined with other marketing channels.'
+      );
+      return;
+    }
+
+    if (
+      typeof businessStage !== "string" ||
+      !businessStage.trim()
+    ) {
+      setValidationError(
+        "Please select your current business stage."
+      );
+      return;
+    }
+
+    const getString = (field: string) => {
+      const value = formData.get(field);
+      return typeof value === "string" ? value.trim() : "";
+    };
+
     const payload = {
-      fullname: formData.get("fullname"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      company: formData.get("company"),
+      fullname: getString("fullname"),
+      email: getString("email"),
+      phone: getString("phone"),
+      company: getString("company"),
+
+      // Must match the EnquiryService enum.
       service: "Digital Execution",
-      topic: "Digital Execution",
-      goals: formData.getAll("goals"),
-      channels: formData.getAll("channels"),
-      businessStage: formData.get("businessStage"),
-      budget: formData.get("budget"),
-      timeline: formData.get("timeline"),
-      subject: formData.get("subject"),
-      message: formData.get("message"),
+
+      // Service-specific fields.
+      goals: [...new Set(selectedGoals)],
+      channels: [...new Set(selectedChannels)],
+      businessStage,
+
+      // Optional enquiry fields.
+      budget: getString("budget"),
+      timeline: getString("timeline"),
+      subject: getString("subject"),
+      message: getString("message"),
     };
 
     await submit(payload);
@@ -76,6 +140,7 @@ export function DigitalExecutionForm() {
               required
               autoComplete="name"
               placeholder="Your full name"
+              maxLength={120}
               className={fieldClass}
             />
           </FormField>
@@ -116,6 +181,7 @@ export function DigitalExecutionForm() {
               name="company"
               autoComplete="organization"
               placeholder="Business name"
+              maxLength={500}
               className={fieldClass}
             />
           </FormField>
@@ -247,6 +313,7 @@ export function DigitalExecutionForm() {
           <input
             id="subject"
             name="subject"
+            maxLength={500}
             placeholder="A short summary of your enquiry"
             className={fieldClass}
           />
@@ -262,6 +329,7 @@ export function DigitalExecutionForm() {
             rows={5}
             required
             minLength={10}
+            maxLength={10000}
             placeholder="What does your business do? What challenges are you facing? What would meaningful progress look like for you?"
             className={`${fieldClass} min-h-[145px] resize-y leading-7`}
           />
@@ -269,7 +337,11 @@ export function DigitalExecutionForm() {
       </FormSection>
 
       {/* Submission feedback */}
-      {status === "error" && <FormError message={errorMessage} />}
+      {(validationError || status === "error") && (
+        <FormError
+          message={validationError || errorMessage}
+        />
+      )}
 
       {/* Submit */}
       <div className="border-t border-border pt-7">
