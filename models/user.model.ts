@@ -1,14 +1,16 @@
-import mongoose, {Schema, Document, Types} from "mongoose";
 
+import mongoose, { Schema, Document, Types } from "mongoose";
+
+export type UserRole = "user" | "admin";
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
   fname: string;
   lname: string;
   email: string;
-  phone:string;
+  phone: string;
   password: string;
-  role: "user" | "admin"
+  role: UserRole;
   image?: string | null;
   imagePublicId?: string | null;
   firstLogin: boolean;
@@ -23,21 +25,23 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       trim: true,
+      maxlength: 100,
     },
 
     lname: {
       type: String,
       required: true,
       trim: true,
+      maxlength: 100,
     },
 
     email: {
       type: String,
+      required: true,
       unique: true,
-      index: true,
       lowercase: true,
       trim: true,
-      required: true,
+      maxlength: 254,
       match: [
         /^\S+@\S+\.\S+$/,
         "Please use a valid email address",
@@ -48,10 +52,10 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
+      trim: true,
       validate: {
-        validator: (phone: string) => {
-          return /^\+?\d{1,3}[- ]?\d{3}[- ]?\d{3}[- ]?\d{4}$/.test(phone);
-        },
+        validator: (phone: string) =>
+          /^\+?\d{1,3}[- ]?\d{3}[- ]?\d{3}[- ]?\d{4}$/.test(phone),
         message: "Invalid phone number format",
       },
     },
@@ -67,8 +71,8 @@ const userSchema = new Schema<IUser>(
       type: String,
       enum: ["user", "admin"],
       default: "admin",
+      required: true,
     },
-
 
     image: {
       type: String,
@@ -96,5 +100,4 @@ const userSchema = new Schema<IUser>(
 );
 
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
-
 export default User;
