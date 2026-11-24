@@ -3,12 +3,12 @@ import User from "@/models/user.model";
 import { dbConnect } from "@/utils/db";
 import { getCurrentUser, requireRole } from "@/utils/auth";
 
-export async function GET() {
+
+
+export async function GET(request: Request) {
   try {
     await dbConnect();
-
-    const currentUser = await getCurrentUser();
-
+    const currentUser = await getCurrentUser(request);
     if (!currentUser) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -18,9 +18,10 @@ export async function GET() {
 
     const roleError = requireRole(currentUser, ["admin"]);
     if (roleError) return roleError;
-
     const admins = await User.find({ role: "admin" })
-      .select("fname lname email phone role image firstLogin lastLogin createdAt")
+      .select(
+        "fname lname email phone role image firstLogin lastLogin createdAt"
+      )
       .sort({ createdAt: -1 })
       .lean();
 

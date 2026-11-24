@@ -32,14 +32,18 @@ const JWT_AUDIENCE = "admin-users";
 const TOKEN_EXPIRES_IN = "7d";
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
 
-const isValidRole = (value: unknown): value is Role =>value === "user" || value === "admin";
+const isValidRole = (value: unknown): value is Role =>
+  value === "user" || value === "admin";
 
-const getJwtSecret = (): string => {const secret = process.env.JWT_SECRET;
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+
   if (!secret || secret.length < 32) {
     throw new Error(
       "JWT_SECRET must be configured and at least 32 characters long."
     );
   }
+
   return secret;
 };
 
@@ -82,9 +86,7 @@ export const createToken = (user: {
   );
 };
 
-export const verifyToken = (
-  token: string
-): TokenPayload | null => {
+export const verifyToken = (token: string): TokenPayload | null => {
   try {
     const decoded = jwt.verify(token, getJwtSecret(), {
       algorithms: ["HS256"],
@@ -107,10 +109,45 @@ export const verifyToken = (
   }
 };
 
+/**
+ * Reads the authentication token from an explicit request when available.
+ * Falls back to Next.js request APIs for Server Components and other
+ * request-bound server contexts.
+ */
+const getToken = async (request?: Request): Promise<string | null> => {
+  if (request) {
+    const authorization = request.headers.get("authorization");
 
-const getToken = async (): Promise<string | null> => {
+    if (authorization?.startsWith("Bearer ")) {
+      const bearerToken = authorization.slice(7).trim();
+
+      if (bearerToken) return bearerToken;
+    }
+
+    const cookieHeader = request.headers.get("cookie");
+
+    if (!cookieHeader) return null;
+
+    const tokenCookie = cookieHeader
+      .split(";")
+      .map((cookie) => cookie.trim())
+      .find((cookie) => cookie.startsWith(`${AUTH_COOKIE}=`));
+
+    if (!tokenCookie) return null;
+
+    const value = tokenCookie.slice(AUTH_COOKIE.length + 1);
+
+    try {
+      return decodeURIComponent(value) || null;
+    } catch {
+      return value || null;
+    }
+  }
+
+  // Used by Server Components and other request-bound server contexts.
   const headerList = await headers();
   const authorization = headerList.get("authorization");
+
   if (authorization?.startsWith("Bearer ")) {
     const bearerToken = authorization.slice(7).trim();
 
@@ -121,19 +158,27 @@ const getToken = async (): Promise<string | null> => {
   return cookieStore.get(AUTH_COOKIE)?.value ?? null;
 };
 
+export const getCurrentUser = async (
+  request?: Request
+): Promise<AuthUser | null> => {
+  const token = await getToken(request);
 
-export const getCurrentUser = async (): Promise<AuthUser | null> => {
-  const token = await getToken();
   if (!token) return null;
+
   const decoded = verifyToken(token);
+
   if (!decoded) return null;
-  const user = await User.findById(decoded.userId).select("-password").lean();
+
+  const user = await User.findById(decoded.userId)
+    .select("-password")
+    .lean();
+
   if (!user || !isValidRole(user.role)) {
     return null;
   }
+
   return serializeUser(user);
 };
-
 
 export const requireRole = (
   user: AuthUser | null,
@@ -156,13 +201,13 @@ export const requireRole = (
   return null;
 };
 
-
 export async function handleLogin(
   req: Request,
   allowedRole: Role
 ) {
   try {
     const body = await req.json().catch(() => null);
+
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return NextResponse.json(
         { error: "Invalid request body." },
@@ -199,6 +244,7 @@ export async function handleLogin(
     }
 
     const user = await User.findOne({ email }).select("+password");
+
     if (!user || !user.password) {
       return NextResponse.json(
         { error: "Invalid credentials." },
@@ -233,12 +279,14 @@ export async function handleLogin(
     }
 
     const lastLogin = new Date();
+
     await User.updateOne(
       { _id: user._id },
       { $set: { lastLogin } }
     );
 
     user.lastLogin = lastLogin;
+
     const token = createToken({
       _id: user._id,
       role: user.role,
@@ -265,7 +313,6 @@ export async function handleLogin(
     );
   }
 }
-
 
 export const handleLogout = async () => {
   const response = NextResponse.json({
