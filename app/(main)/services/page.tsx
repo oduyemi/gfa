@@ -8,6 +8,7 @@ import { EngagementModels } from "@/components/services/EngagementModels";
 import { ServicesCTA } from "@/components/services/CTA";
 import { AudienceSection } from "@/components/services/AudienceSection";
 import { EngagementProcess } from "@/components/services/EngagementProcess";
+import { NewsletterCTA } from "@/components/shared/NewsletterCTA";
 
 export const metadata: Metadata = {
   title: "Digital Services | Web Design, Digital Marketing & Virtual Assistance",
@@ -150,6 +151,7 @@ export default function ServicesPage() {
 
       <ServicesHero />
       <EngagementModels />
+      <NewsletterCTA />
       <DigitalCreation />
       <DigitalExecution />
       <VirtualAssistance />

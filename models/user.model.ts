@@ -8,6 +8,7 @@ export interface IUser extends Document {
   email: string;
   phone:string;
   password: string;
+  role: "user" | "admin"
   image?: string | null;
   imagePublicId?: string | null;
   firstLogin: boolean;
@@ -61,6 +62,13 @@ const userSchema = new Schema<IUser>(
       minlength: 8,
       select: false,
     },
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "admin",
+    },
+
 
     image: {
       type: String,

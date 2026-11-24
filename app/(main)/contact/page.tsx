@@ -1,13 +1,11 @@
-
 import type { Metadata } from "next";
-
 import { absoluteUrl } from "@/lib/seo";
-
 import { ContactHero } from "@/components/contact/Hero";
 import { ContactOptions } from "@/components/contact/Options";
 import { ContactForm } from "@/components/contact/Form";
 import { ContactExpectations } from "@/components/contact/Expectations";
 import { ContactCTA } from "@/components/contact/CTA";
+import { NewsletterCTA } from "@/components/shared/NewsletterCTA";
 
 const pageTitle = "Contact Go Far Agency | Let's Talk About Your Project";
 
@@ -106,6 +104,7 @@ export default function ContactPage() {
         <ContactHero />
         <ContactOptions />
         <ContactForm />
+        <NewsletterCTA />
         <ContactExpectations />
         <ContactCTA />
       </main>

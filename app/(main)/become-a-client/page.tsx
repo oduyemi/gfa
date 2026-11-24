@@ -3,6 +3,7 @@ import { BecomeAClient } from "@/components/client/Become";
 import { ClientHero } from "@/components/client/Hero";
 import { ClientFAQ } from "@/components/client/FAQ";
 import { CTAClient } from "@/components/client/index";
+import { NewsletterCTA } from "@/components/shared/NewsletterCTA";
 
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function BecomeClient() {
     <main>
       <ClientHero />
       <BecomeAClient />
+      <NewsletterCTA />
       <ClientFAQ />
       <CTAClient />
     </main>
