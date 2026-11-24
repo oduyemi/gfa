@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/utils/db";
-import Enquiry, { EnquiryService, EnquiryStatus, type IEnquiry } from "@/models/enquiry.model";import {
+import Enquiry, {
+    EnquiryService,
+    EnquiryStatus,
+    GeneralServiceInterest,
+    CreationService,
+    ExecutionGoal,
+    MarketingChannel,
+    BusinessStage,
+    SupportTask,
+    SupportType,
+    SupportHours,
+    type IEnquiry,
+} from "@/models/enquiry.model";
+import {
   authorizeEnquiryAdmin,
   escapeEnquiryRegex,
   getEnquiryValidationMessage,
@@ -28,12 +41,25 @@ const optionalStringFields = [
   "projectName",
 ] as const;
 
-function isStringArray(value: unknown): value is string[] {
-  return (
-    Array.isArray(value) &&
-    value.every((item) => typeof item === "string")
-  );
-}
+function isEnumValue<T extends Record<string, string>>(
+    value: unknown,
+    enumObject: T,
+  ): value is T[keyof T] {
+    return (
+      typeof value === "string" &&
+      Object.values(enumObject).includes(value as T[keyof T])
+    );
+  }
+  
+  function isEnumArray<T extends Record<string, string>>(
+    value: unknown,
+    enumObject: T,
+  ): value is Array<T[keyof T]> {
+    return (
+      Array.isArray(value) &&
+      value.every((item) => isEnumValue(item, enumObject))
+    );
+  }
 
 export async function GET(request: NextRequest) {
   try {
@@ -141,6 +167,7 @@ export async function GET(request: NextRequest) {
 
 
 
+
 export async function POST(request: NextRequest) {
     try {
         const ip = getClientIp(request);
@@ -159,7 +186,7 @@ export async function POST(request: NextRequest) {
                 "X-RateLimit-Limit": String(rateLimit.limit),
                 "X-RateLimit-Remaining": "0",
             },
-            }
+            },
         );
         }
     
@@ -170,35 +197,23 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "Invalid request body.",
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
     
-        const fullname =
-        typeof body.fullname === "string"
-            ? body.fullname.trim()
-            : "";
-    
+        const fullname = typeof body.fullname === "string" ? body.fullname.trim() : "";
         const email = normalizeEnquiryEmail(body.email);
         const phone = normalizeEnquiryPhone(body.phone);
-        const message = typeof body.message === "string"
-            ? body.message.trim()
-            : "";
-    
+        const message = typeof body.message === "string" ? body.message.trim() : "";
         const serviceValue: unknown = body.service;
-        if (
-        !fullname ||
-        !email ||
-        !phone ||
-        !message ||
-        !serviceValue
-        ) {
+    
+        if (!fullname || !email || !phone || !message || !serviceValue) {
         return NextResponse.json(
             {
             success: false,
             message: "Please complete all required fields.",
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
     
@@ -208,7 +223,7 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "One or more fields exceed the allowed length.",
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
     
@@ -218,7 +233,7 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "Your message must contain at least 10 characters.",
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
     
@@ -231,7 +246,7 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "Please select a valid enquiry service.",
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
     
@@ -239,90 +254,206 @@ export async function POST(request: NextRequest) {
         const optionalFields: Partial<
         Pick<
             IEnquiry,
-            | "company"
-            | "subject"
-            | "budget"
-            | "timeline"
-            | "projectName"
+            "company" | "subject" | "budget" | "timeline" | "projectName"
         >
         > = {};
     
-        for (const field of optionalStringFields) {const value = body[field];
-        if (value !== undefined && value !== null) {
-            if (typeof value !== "string") {
+        for (const field of optionalStringFields) {
+        const value = body[field];
+        if (value === undefined || value === null) continue;
+        if (typeof value !== "string") {
             return NextResponse.json(
-                {
+            {
                 success: false,
                 message: `Invalid value for ${field}.`,
-                },
-                { status: 400 }
+            },
+            { status: 400 },
             );
-            }
+        }
     
-            const trimmed = value.trim();
-            if (trimmed.length > 500) {
+        const trimmed = value.trim();
+        if (trimmed.length > 500) {
             return NextResponse.json(
-                {
+            {
                 success: false,
                 message: `${field} is too long.`,
-                },
-                { status: 400 }
+            },
+            { status: 400 },
             );
-            }
+        }
     
-            if (trimmed) {
+        if (trimmed) {
             optionalFields[field] = trimmed;
-            }
         }
         }
     
+        const enumFields: Partial<
+        Pick<
+            IEnquiry,
+            "serviceInterest" | "businessStage" | "supportType" | "hours"
+        >
+        > = {};
+        const serviceInterestValue = body.serviceInterest;
+        if (
+        serviceInterestValue !== undefined &&
+        serviceInterestValue !== null &&
+        serviceInterestValue !== ""
+        ) {
+        if (
+            !isEnumValue(serviceInterestValue, GeneralServiceInterest)
+        ) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "Please select a valid service interest.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        enumFields.serviceInterest = serviceInterestValue;
+        }
+    
+        const businessStageValue = body.businessStage;
+        if (
+        businessStageValue !== undefined &&
+        businessStageValue !== null &&
+        businessStageValue !== ""
+        ) {
+        if (!isEnumValue(businessStageValue, BusinessStage)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "Please select a valid business stage.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        enumFields.businessStage = businessStageValue;
+        }
+    
+        const supportTypeValue = body.supportType;
+        if (
+        supportTypeValue !== undefined &&
+        supportTypeValue !== null &&
+        supportTypeValue !== ""
+        ) {
+        if (!isEnumValue(supportTypeValue, SupportType)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "Please select a valid support arrangement.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        enumFields.supportType = supportTypeValue;
+        }
+        const hoursValue = body.hours;  
+        if (
+        hoursValue !== undefined &&
+        hoursValue !== null &&
+        hoursValue !== ""
+        ) {
+        if (!isEnumValue(hoursValue, SupportHours)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "Please select a valid support hours option.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        enumFields.hours = hoursValue;
+        }
         const optionalArrays: Partial<
         Pick<
             IEnquiry,
-            | "creationServices"
-            | "goals"
-            | "channels"
-            | "supportTasks"
+            "creationServices" | "goals" | "channels" | "supportTasks"
         >
         > = {};
     
-        for (const field of arrayFields) {
-        const value = body[field];
-        if (value !== undefined && value !== null) {
-            if (!isStringArray(value)) {
+        const creationServicesValue = body.creationServices;
+        if (
+        creationServicesValue !== undefined &&
+        creationServicesValue !== null
+        ) {
+        if (!isEnumArray(creationServicesValue, CreationService)) {
             return NextResponse.json(
-                {
+            {
                 success: false,
-                message: `Invalid selection for ${field}.`,
-                },
-                { status: 400 }
+                message: "One or more creation service selections are invalid.",
+            },
+            { status: 400 },
             );
-            }
-    
-            const uniqueValues = [...new Set(value)];
-    
-            switch (field) {
-            case "creationServices":
-                optionalArrays.creationServices =
-                uniqueValues as IEnquiry["creationServices"];
-                break;
-    
-            case "goals":
-                optionalArrays.goals =
-                uniqueValues as IEnquiry["goals"];
-                break;
-    
-            case "channels":
-                optionalArrays.channels =
-                uniqueValues as IEnquiry["channels"];
-                break;
-    
-            case "supportTasks":
-                optionalArrays.supportTasks =
-                uniqueValues as IEnquiry["supportTasks"];
-                break;
-            }
         }
+    
+        optionalArrays.creationServices = [
+            ...new Set(creationServicesValue),
+        ];
+        }
+    
+        const goalsValue = body.goals;
+        if (goalsValue !== undefined && goalsValue !== null) {
+        if (!isEnumArray(goalsValue, ExecutionGoal)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "One or more business goal selections are invalid.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        optionalArrays.goals = [...new Set(goalsValue)];
+        }
+    
+        const channelsValue = body.channels;
+        if (channelsValue !== undefined && channelsValue !== null) {
+        if (!isEnumArray(channelsValue, MarketingChannel)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "One or more marketing channel selections are invalid.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        const uniqueChannels = [...new Set(channelsValue)];
+        if (
+            uniqueChannels.includes(MarketingChannel.NONE) &&
+            uniqueChannels.length > 1
+        ) {
+            return NextResponse.json(
+            {
+                success: false,
+                message:
+                '"Not currently using any" cannot be combined with other marketing channels.',
+            },
+            { status: 400 },
+            );
+        }
+    
+        optionalArrays.channels = uniqueChannels;
+        }
+    
+        const supportTasksValue = body.supportTasks;
+        if (supportTasksValue !== undefined && supportTasksValue !== null) {
+        if (!isEnumArray(supportTasksValue, SupportTask)) {
+            return NextResponse.json(
+            {
+                success: false,
+                message: "One or more support task selections are invalid.",
+            },
+            { status: 400 },
+            );
+        }
+    
+        optionalArrays.supportTasks = [...new Set(supportTasksValue)];
         }
     
         const enquiryData: Partial<IEnquiry> = {
@@ -333,33 +464,7 @@ export async function POST(request: NextRequest) {
         service,
         ...optionalFields,
         ...optionalArrays,
-    
-        ...(typeof body.serviceInterest === "string"
-            ? {
-                serviceInterest:
-                body.serviceInterest as IEnquiry["serviceInterest"],
-            }
-            : {}),
-    
-        ...(typeof body.businessStage === "string"
-            ? {
-                businessStage:
-                body.businessStage as IEnquiry["businessStage"],
-            }
-            : {}),
-    
-        ...(typeof body.supportType === "string"
-            ? {
-                supportType:
-                body.supportType as IEnquiry["supportType"],
-            }
-            : {}),
-    
-        ...(typeof body.hours === "string"
-            ? {
-                hours: body.hours as IEnquiry["hours"],
-            }
-            : {}),
+        ...enumFields,
         };
     
         await dbConnect();
@@ -375,7 +480,7 @@ export async function POST(request: NextRequest) {
             createdAt: enquiry.createdAt,
             },
         },
-        { status: 201 }
+        { status: 201 },
         );
     } catch (error) {
         if (isEnquiryValidationError(error)) {
@@ -384,19 +489,18 @@ export async function POST(request: NextRequest) {
             success: false,
             message: getEnquiryValidationMessage(error),
             },
-            { status: 400 }
+            { status: 400 },
         );
         }
-    
         console.error("POST enquiry error:", error);
-    
         return NextResponse.json(
         {
             success: false,
             message: "Unable to submit your enquiry. Please try again.",
         },
-        { status: 500 }
+        { status: 500 },
         );
     }
 }
+  
   

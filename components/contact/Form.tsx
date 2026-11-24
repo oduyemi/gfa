@@ -1,16 +1,8 @@
-
 "use client";
-
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  CheckCircle2,
-  LoaderCircle,
-  Send,
-} from "lucide-react";
+import {ArrowRight, ArrowUpRight, Check, CheckCircle2, LoaderCircle, Send} from "lucide-react";
+
 
 const serviceInterests = [
   "Digital Creation",
@@ -19,6 +11,8 @@ const serviceInterests = [
   "Multiple services",
   "I'm not sure yet",
 ] as const;
+
+
 
 const creationServices = [
   "Graphic design & branding",
@@ -240,72 +234,125 @@ function CheckboxGrid({
 
 export const ContactForm = () => {
   const reduceMotion = useReducedMotion();
-
   const [status, setStatus] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [serviceInterest, setServiceInterest] = useState<ServiceInterest | "">("");
-
   const [selectedCreationServices, setSelectedCreationServices] = useState<string[]>([]);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
   const [selectedSupportTasks, setSelectedSupportTasks] = useState<string[]>([]);
-
+  
+  const formRef = useRef<HTMLFormElement>(null);
+  
   function resetServiceFields() {
     setSelectedCreationServices([]);
     setSelectedGoals([]);
     setSelectedChannels([]);
     setSelectedSupportTasks([]);
   }
-
+  
   function handleServiceChange(value: string) {
     setServiceInterest(value as ServiceInterest | "");
     resetServiceFields();
+    setErrorMessage("");
+    setStatus("idle");
   }
-
+  
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
+  
     if (status === "loading") return;
-
+  
     const form = event.currentTarget;
-
+  
     if (!serviceInterest) {
       setStatus("error");
       setErrorMessage("Please select the service you're interested in.");
       return;
     }
-
+  
+    // Validate Digital Creation
+    if (isCreation && selectedCreationServices.length === 0) {
+      setStatus("error");
+      setErrorMessage("Please select at least one creation service.");
+      return;
+    }
+  
+    // Validate Digital Execution
+    if (isExecution) {
+      if (selectedGoals.length === 0) {
+        setStatus("error");
+        setErrorMessage("Please select at least one business goal.");
+        return;
+      }
+  
+      if (selectedChannels.length === 0) {
+        setStatus("error");
+        setErrorMessage("Please select at least one marketing channel.");
+        return;
+      }
+  
+      const businessStage = form.elements.namedItem(
+        "businessStage",
+      ) as HTMLSelectElement | null;
+  
+      if (!businessStage?.value) {
+        setStatus("error");
+        setErrorMessage("Please select your current business stage.");
+        return;
+      }
+    }
+  
+    // Validate Managed Virtual Assistance
+    if (isAssistance) {
+      if (selectedSupportTasks.length === 0) {
+        setStatus("error");
+        setErrorMessage("Please select at least one support task.");
+        return;
+      }
+  
+      const supportType = form.elements.namedItem(
+        "supportType",
+      ) as HTMLSelectElement | null;
+  
+      if (!supportType?.value) {
+        setStatus("error");
+        setErrorMessage("Please select your preferred support arrangement.");
+        return;
+      }
+    }
+  
     const formData = new FormData(form);
-
+  
     const payload: Record<string, unknown> = {
       ...Object.fromEntries(formData.entries()),
       service: "General Enquiry",
       serviceInterest,
     };
-
-    // FormData only captures one value for repeated names.
-    // Explicitly supply the multi-select fields as arrays.
+  
+    // FormData does not reliably capture repeated checkbox values as arrays.
     delete payload.creationServices;
     delete payload.goals;
     delete payload.channels;
     delete payload.supportTasks;
-
-    if (serviceInterest === "Digital Creation") {
+  
+    // Include every applicable section.
+    if (isCreation) {
       payload.creationServices = selectedCreationServices;
     }
-
-    if (serviceInterest === "Digital Execution") {
+  
+    if (isExecution) {
       payload.goals = selectedGoals;
       payload.channels = selectedChannels;
     }
-
-    if (serviceInterest === "Managed Virtual Assistance") {
+  
+    if (isAssistance) {
       payload.supportTasks = selectedSupportTasks;
     }
-
+  
     setStatus("loading");
     setErrorMessage("");
-
+  
     try {
       const response = await fetch("/api/enquiry", {
         method: "POST",
@@ -314,15 +361,15 @@ export const ContactForm = () => {
         },
         body: JSON.stringify(payload),
       });
-
+  
       const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
+  
+      if (!response.ok || !data?.success) {
         throw new Error(
           data?.message || "Something went wrong. Please try again.",
         );
       }
-
+  
       setStatus("success");
       setServiceInterest("");
       resetServiceFields();
@@ -344,12 +391,11 @@ export const ContactForm = () => {
     transition: { duration: reduceMotion ? 0 : 0.65 },
   };
 
-  const isCreation = serviceInterest === "Digital Creation";
-  const isExecution = serviceInterest === "Digital Execution";
-  const isAssistance = serviceInterest === "Managed Virtual Assistance";
-  const isGeneral =
-    serviceInterest === "Multiple services" ||
-    serviceInterest === "I'm not sure yet";
+  const isMultiple = serviceInterest === "Multiple services";
+  const isCreation = serviceInterest === "Digital Creation" || isMultiple;
+  const isExecution = serviceInterest === "Digital Execution" || isMultiple;
+  const isAssistance = serviceInterest === "Managed Virtual Assistance" || isMultiple;
+  const isGeneral = serviceInterest === "I'm not sure yet";
 
   return (
     <section
@@ -519,6 +565,7 @@ export const ContactForm = () => {
                 </div>
               ) : (
                 <form
+                  ref={formRef}
                   onSubmit={handleSubmit}
                   className="flex h-full flex-col p-5 sm:p-8 lg:p-9 xl:p-10"
                   aria-busy={status === "loading"}
