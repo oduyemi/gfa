@@ -1,7 +1,9 @@
 
 import mongoose, { Schema, Document, Types } from "mongoose";
 
+
 export type UserRole = "user" | "admin";
+
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -17,6 +19,8 @@ export interface IUser extends Document {
   lastLogin?: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  passwordResetTokenHash: string | null;
+  passwordResetExpiresAt: Date | null;
 }
 
 const userSchema = new Schema<IUser>(
@@ -92,6 +96,18 @@ const userSchema = new Schema<IUser>(
     lastLogin: {
       type: Date,
       default: null,
+    },
+
+    passwordResetTokenHash: {
+      type: String,
+      default: null,
+      select: false,
+    },
+    
+    passwordResetExpiresAt: {
+      type: Date,
+      default: null,
+      select: false,
     },
   },
   {
