@@ -1,4 +1,6 @@
+
 "use client";
+
 import { useState, type FormEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -17,8 +19,8 @@ const services = [
   "Digital Creation",
   "Digital Execution",
   "Managed Virtual Assistance",
-  "A combination of services",
-  "Not sure yet",
+  "Multiple services",
+  "I'm not sure yet",
 ];
 
 const budgets = [
@@ -37,6 +39,67 @@ const timelines = [
   "Within 1–3 months",
   "3+ months",
   "Flexible / just exploring",
+];
+
+const creationServices = [
+  "Graphic design & branding",
+  "Web design & development",
+  "Video editing",
+  "Content creation & writing",
+  "Sourcing service providers",
+  "Something else",
+];
+
+const executionGoals = [
+  "Increase brand awareness",
+  "Generate leads",
+  "Increase sales",
+  "Improve online presence",
+  "Build a marketing strategy",
+  "Automate business processes",
+  "Other",
+];
+
+const marketingChannels = [
+  "Instagram",
+  "Facebook",
+  "Google",
+  "YouTube",
+  "TikTok",
+  "LinkedIn",
+  "Website / SEO",
+  "Not currently using any",
+];
+
+const businessStages = [
+  "Idea / pre-launch",
+  "New business",
+  "Established business",
+  "Growing / scaling",
+  "Rebranding / repositioning",
+];
+
+const supportTasks = [
+  "Administrative support & data entry",
+  "Email management",
+  "Calendar & appointment management",
+  "Social media scheduling",
+  "Customer service",
+  "Event coordination",
+  "Research",
+  "Reports & documentation",
+  "Other",
+];
+
+const supportTypes = ["Hourly", "Package", "Not sure"];
+
+const supportHours = [
+  "Up to 10 hours",
+  "10 hours",
+  "20 hours",
+  "30 hours",
+  "More than 30 hours",
+  "Flexible / unsure",
 ];
 
 const steps = [
@@ -71,18 +134,48 @@ const labelClass =
 
 const revealEase = [0.22, 1, 0.36, 1] as const;
 
+type EnquiryForm = {
+  fullname: string;
+  email: string;
+  phone: string;
+  business: string;
+  service: string;
+  budget: string;
+  timeline: string;
+  businessStage: string;
+  supportType: string;
+  hours: string;
+  message: string;
+};
+
+const initialForm: EnquiryForm = {
+  fullname: "",
+  email: "",
+  phone: "",
+  business: "",
+  service: "",
+  budget: "",
+  timeline: "",
+  businessStage: "",
+  supportType: "",
+  hours: "",
+  message: "",
+};
+
 export const BecomeAClient = () => {
   const reducedMotion = useReducedMotion();
 
-  const [form, setForm] = useState({
-    fullname: "",
-    email: "",
-    business: "",
-    service: "",
-    budget: "",
-    timeline: "",
-    message: "",
-  });
+  const [form, setForm] = useState<EnquiryForm>(initialForm);
+
+  const [selectedCreationServices, setSelectedCreationServices] = useState<
+    string[]
+  >([]);
+
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const [selectedSupportTasks, setSelectedSupportTasks] = useState<string[]>(
+    [],
+  );
 
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -90,46 +183,143 @@ export const BecomeAClient = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const updateField = (field: keyof typeof form, value: string) => {
+  const updateField = (field: keyof EnquiryForm, value: string) => {
     setForm((previous) => ({
       ...previous,
       [field]: value,
     }));
   };
 
+  const toggleSelection = (
+    value: string,
+    current: string[],
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+  ) => {
+    setter(
+      current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value],
+    );
+  };
+
+  // "Not currently using any" must be exclusive.
+  const toggleChannel = (channel: string) => {
+    setSelectedChannels((current) => {
+      if (channel === "Not currently using any") {
+        return current.includes(channel) ? [] : [channel];
+      }
+
+      const withoutNone = current.filter(
+        (item) => item !== "Not currently using any",
+      );
+
+      return withoutNone.includes(channel)
+        ? withoutNone.filter((item) => item !== channel)
+        : [...withoutNone, channel];
+    });
+  };
+
+  const resetForm = () => {
+    setForm(initialForm);
+    setSelectedCreationServices([]);
+    setSelectedGoals([]);
+    setSelectedChannels([]);
+    setSelectedSupportTasks([]);
+    setErrorMessage("");
+  };
+
+  const validateServiceDetails = () => {
+    switch (form.service) {
+      case "Digital Creation":
+        if (!selectedCreationServices.length) {
+          return "Please select at least one Digital Creation service.";
+        }
+        break;
+
+      case "Digital Execution":
+        if (!selectedGoals.length) {
+          return "Please select at least one business goal.";
+        }
+
+        if (!selectedChannels.length) {
+          return "Please select at least one marketing channel.";
+        }
+
+        if (!form.businessStage) {
+          return "Please select your business stage.";
+        }
+        break;
+
+      case "Managed Virtual Assistance":
+        if (!selectedSupportTasks.length) {
+          return "Please select at least one area where you need support.";
+        }
+
+        if (!form.supportType) {
+          return "Please select your preferred support arrangement.";
+        }
+        break;
+    }
+
+    return "";
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const validationError = validateServiceDetails();
+
+    if (validationError) {
+      setStatus("error");
+      setErrorMessage(validationError);
+      return;
+    }
 
     setStatus("loading");
     setErrorMessage("");
 
-    const subject = `New client enquiry — ${form.service}`;
+    const payload = {
+      fullname: form.fullname,
+      email: form.email,
+      phone: form.phone,
+      company: form.business || undefined,
 
-    const message = [
-      "NEW CLIENT ENQUIRY",
-      "",
-      `Service: ${form.service}`,
-      `Business / Brand: ${form.business || "Not provided"}`,
-      `Budget: ${form.budget || "Not specified"}`,
-      `Preferred timeline: ${form.timeline || "Not specified"}`,
-      "",
-      "PROJECT DETAILS",
-      form.message,
-    ].join("\n");
+      service: "General Enquiry",
+      serviceInterest: form.service,
+
+      subject: `New client enquiry — ${form.service}`,
+      message: form.message,
+
+      budget: form.budget || undefined,
+      timeline: form.timeline || undefined,
+
+      // Digital Creation
+      ...(form.service === "Digital Creation" && {
+        creationServices: selectedCreationServices,
+      }),
+
+      // Digital Execution
+      ...(form.service === "Digital Execution" && {
+        goals: selectedGoals,
+        channels: selectedChannels,
+        businessStage: form.businessStage,
+      }),
+
+      // Managed Virtual Assistance
+      ...(form.service === "Managed Virtual Assistance" && {
+        supportTasks: selectedSupportTasks,
+        supportType: form.supportType,
+        hours: form.hours || undefined,
+      }),
+    };
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/enquiry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          fullname: form.fullname,
-          email: form.email,
-          topic: "General",
-          subject,
-          message,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -140,17 +330,8 @@ export const BecomeAClient = () => {
         );
       }
 
+      resetForm();
       setStatus("success");
-
-      setForm({
-        fullname: "",
-        email: "",
-        business: "",
-        service: "",
-        budget: "",
-        timeline: "",
-        message: "",
-      });
     } catch (error) {
       setStatus("error");
       setErrorMessage(
@@ -203,9 +384,8 @@ export const BecomeAClient = () => {
             </p>
           </motion.div>
 
-          {/* Equal-height columns on desktop */}
           <div className="grid items-stretch gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-10 xl:gap-14">
-            {/* ── LEFT: PROCESS PANEL ─────────────────────── */}
+            {/* LEFT: PROCESS PANEL */}
             <motion.aside
               {...reveal}
               className="flex min-w-0 lg:h-full"
@@ -283,7 +463,7 @@ export const BecomeAClient = () => {
               </div>
             </motion.aside>
 
-            {/* ── RIGHT: FORM PANEL ───────────────────────── */}
+            {/* RIGHT: FORM PANEL */}
             <motion.div
               {...reveal}
               transition={
@@ -344,7 +524,7 @@ export const BecomeAClient = () => {
                   </div>
                 ) : (
                   <>
-                    {/* Form heading */}
+                    {/* FORM HEADING */}
                     <div className="border-b border-border px-6 py-7 sm:px-9 sm:py-9">
                       <div className="flex flex-wrap items-center justify-between gap-4">
                         <div>
@@ -433,25 +613,47 @@ export const BecomeAClient = () => {
                           </div>
                         </div>
 
-                        <div className="mt-5">
-                          <label htmlFor="business" className={labelClass}>
-                            Business or brand
-                            <span className="ml-1 font-normal text-muted-foreground">
-                              (optional)
-                            </span>
-                          </label>
-                          <input
-                            id="business"
-                            name="business"
-                            type="text"
-                            autoComplete="organization"
-                            value={form.business}
-                            onChange={(e) =>
-                              updateField("business", e.target.value)
-                            }
-                            placeholder="Your business or brand name"
-                            className={inputClass}
-                          />
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                          <div>
+                            <label htmlFor="phone" className={labelClass}>
+                              Phone number
+                              <span className="ml-1 text-brand-electric">*</span>
+                            </label>
+                            <input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              autoComplete="tel"
+                              required
+                              value={form.phone}
+                              onChange={(e) =>
+                                updateField("phone", e.target.value)
+                              }
+                              placeholder="+44 7700 900000"
+                              className={inputClass}
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="business" className={labelClass}>
+                              Business or brand
+                              <span className="ml-1 font-normal text-muted-foreground">
+                                (optional)
+                              </span>
+                            </label>
+                            <input
+                              id="business"
+                              name="business"
+                              type="text"
+                              autoComplete="organization"
+                              value={form.business}
+                              onChange={(e) =>
+                                updateField("business", e.target.value)
+                              }
+                              placeholder="Your business or brand name"
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
                       </section>
 
@@ -476,12 +678,14 @@ export const BecomeAClient = () => {
                           <div className="relative">
                             <select
                               id="service"
-                              name="service"
+                              name="serviceInterest"
                               required
                               value={form.service}
-                              onChange={(e) =>
-                                updateField("service", e.target.value)
-                              }
+                              onChange={(e) => {
+                                updateField("service", e.target.value);
+                                setErrorMessage("");
+                                setStatus("idle");
+                              }}
                               className={`${inputClass} appearance-none pr-12`}
                             >
                               <option value="" disabled>
@@ -496,6 +700,200 @@ export const BecomeAClient = () => {
                             <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
+
+                        {/* DIGITAL CREATION FIELDS */}
+                        {form.service === "Digital Creation" && (
+                          <div className="mt-7 space-y-4">
+                            <ConditionalHeading
+                              title="What would you like us to create?"
+                              description="Select the creative services relevant to your project."
+                            />
+
+                            <ChoiceGrid
+                              options={creationServices}
+                              selected={selectedCreationServices}
+                              onToggle={(value) =>
+                                toggleSelection(
+                                  value,
+                                  selectedCreationServices,
+                                  setSelectedCreationServices,
+                                )
+                              }
+                            />
+                          </div>
+                        )}
+
+                        {/* DIGITAL EXECUTION FIELDS */}
+                        {form.service === "Digital Execution" && (
+                          <div className="mt-7 space-y-7">
+                            <div className="space-y-4">
+                              <ConditionalHeading
+                                title="What would you like to achieve?"
+                                description="Choose the goals you'd like your digital activity to support."
+                              />
+
+                              <ChoiceGrid
+                                options={executionGoals}
+                                selected={selectedGoals}
+                                onToggle={(value) =>
+                                  toggleSelection(
+                                    value,
+                                    selectedGoals,
+                                    setSelectedGoals,
+                                  )
+                                }
+                              />
+                            </div>
+
+                            <div className="space-y-4">
+                              <ConditionalHeading
+                                title="Which marketing channels do you currently use?"
+                                description="Select all that apply. Choose the final option if you aren't currently using any."
+                              />
+
+                              <ChoiceGrid
+                                options={marketingChannels}
+                                selected={selectedChannels}
+                                onToggle={toggleChannel}
+                              />
+                            </div>
+
+                            <div>
+                              <label
+                                htmlFor="businessStage"
+                                className={labelClass}
+                              >
+                                Where is your business currently?
+                                <span className="ml-1 text-brand-electric">
+                                  *
+                                </span>
+                              </label>
+
+                              <div className="relative">
+                                <select
+                                  id="businessStage"
+                                  name="businessStage"
+                                  required
+                                  value={form.businessStage}
+                                  onChange={(e) =>
+                                    updateField(
+                                      "businessStage",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className={`${inputClass} appearance-none pr-12`}
+                                >
+                                  <option value="" disabled>
+                                    Select your business stage
+                                  </option>
+                                  {businessStages.map((stage) => (
+                                    <option key={stage} value={stage}>
+                                      {stage}
+                                    </option>
+                                  ))}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* VIRTUAL ASSISTANCE FIELDS */}
+                        {form.service === "Managed Virtual Assistance" && (
+                          <div className="mt-7 space-y-6">
+                            <div className="space-y-4">
+                              <ConditionalHeading
+                                title="Where could you use an extra pair of hands?"
+                                description="Select the areas where you'd like support."
+                              />
+
+                              <ChoiceGrid
+                                options={supportTasks}
+                                selected={selectedSupportTasks}
+                                onToggle={(value) =>
+                                  toggleSelection(
+                                    value,
+                                    selectedSupportTasks,
+                                    setSelectedSupportTasks,
+                                  )
+                                }
+                              />
+                            </div>
+
+                            <div>
+                              <label
+                                className={labelClass}
+                                htmlFor="supportType"
+                              >
+                                Preferred support arrangement
+                                <span className="ml-1 text-brand-electric">
+                                  *
+                                </span>
+                              </label>
+
+                              <div className="grid gap-3 sm:grid-cols-3">
+                                {supportTypes.map((type) => (
+                                  <label
+                                    key={type}
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-background p-4 transition hover:border-brand-electric/50 has-[:checked]:border-brand-electric has-[:checked]:bg-brand-electric/[0.05]"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="supportType"
+                                      value={type}
+                                      required
+                                      checked={form.supportType === type}
+                                      onChange={(e) =>
+                                        updateField(
+                                          "supportType",
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="h-4 w-4 accent-[var(--color-brand-electric)]"
+                                    />
+                                    <span className="text-sm font-medium text-foreground">
+                                      {type}
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <label
+                                htmlFor="hours"
+                                className={labelClass}
+                              >
+                                Hours you're considering
+                                <span className="ml-1 font-normal text-muted-foreground">
+                                  (optional)
+                                </span>
+                              </label>
+
+                              <div className="relative">
+                                <select
+                                  id="hours"
+                                  name="hours"
+                                  value={form.hours}
+                                  onChange={(e) =>
+                                    updateField("hours", e.target.value)
+                                  }
+                                  className={`${inputClass} appearance-none pr-12`}
+                                >
+                                  <option value="">
+                                    Select an option
+                                  </option>
+                                  {supportHours.map((hours) => (
+                                    <option key={hours} value={hours}>
+                                      {hours}
+                                    </option>
+                                  ))}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                           <div>
@@ -551,8 +949,8 @@ export const BecomeAClient = () => {
 
                         <p className="mt-3 text-xs leading-5 text-muted-foreground">
                           Still working things out? You can select
-                          &ldquo;Not sure yet&rdquo; or leave the optional
-                          details blank.
+                          &ldquo;I'm not sure yet&rdquo; or leave the
+                          optional details blank.
                         </p>
                       </section>
 
@@ -646,7 +1044,65 @@ export const BecomeAClient = () => {
           </div>
         </div>
       </section>
-
     </main>
   );
 };
+
+/* Reusable conditional field helpers */
+
+function ConditionalHeading({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div>
+      <h5 className="text-sm font-semibold text-foreground">{title}</h5>
+      <p className="mt-1 text-xs leading-5 text-muted-foreground">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function ChoiceGrid({
+  options,
+  selected,
+  onToggle,
+}: {
+  options: string[];
+  selected: string[];
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div className="grid gap-2.5 sm:grid-cols-2">
+      {options.map((option) => {
+        const checked = selected.includes(option);
+
+        return (
+          <label
+            key={option}
+            className="group flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-3.5 transition-all hover:border-brand-electric/40 has-[:checked]:border-brand-electric has-[:checked]:bg-brand-electric/[0.045]"
+          >
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={() => onToggle(option)}
+              className="peer sr-only"
+            />
+
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-card text-transparent transition peer-checked:border-brand-electric peer-checked:bg-brand-electric peer-checked:text-white">
+              <Check className="h-3.5 w-3.5" strokeWidth={3} />
+            </span>
+
+            <span className="text-sm leading-5 text-foreground transition-colors group-hover:text-brand-electric">
+              {option}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  );
+}

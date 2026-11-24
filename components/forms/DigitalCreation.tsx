@@ -1,7 +1,8 @@
 "use client";
-import { useContactSubmission } from "@/hooks/useContactSubmission";
+import { useState, type FormEvent } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Check, CheckCircle2, LoaderCircle, Send } from "lucide-react";
 import { FormField, inputClass, budgetOptions, timelineOptions } from "@/utils/contact-form";
-import { CheckCircle2, LoaderCircle, Send } from "lucide-react";
 
 const creationServices = [
   "Graphic design & branding",
@@ -12,225 +13,390 @@ const creationServices = [
   "Something else",
 ];
 
-export function DigitalCreationForm({
-  onSuccess,
-}: {
-  onSuccess?: () => void;
-}) {
-  const { status, errorMessage, submit } = useContactSubmission();
+const initialForm = {
+  fullname: "",
+  email: "",
+  phone: "",
+  company: "",
+  projectName: "",
+  budget: "",
+  timeline: "",
+  subject: "",
+  message: "",
+};
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+export const DigitalCreationForm = () => {
+  const shouldReduceMotion = useReducedMotion();
+  const [formData, setFormData] = useState(initialForm);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const updateField = (field: keyof typeof initialForm, value: string) => {
+    setFormData((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const toggleService = (service: string) => {
+    setSelectedServices((current) =>
+      current.includes(service)
+        ? current.filter((item) => item !== service)
+        : [...current, service]
+    );
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError("");
 
-    const formData = new FormData(event.currentTarget);
+    if (selectedServices.length === 0) {
+      setError("Please select at least one creative service.");
+      return;
+    }
 
-    const selectedServices = formData.getAll("creationServices");
+    setIsSubmitting(true);
 
-    const payload = {
-      fullname: formData.get("fullname"),
-      email: formData.get("email"),
-      company: formData.get("company"),
-      service: "Digital Creation",
-      topic: "Digital Creation",
-      creationServices: selectedServices,
-      projectName: formData.get("projectName"),
-      budget: formData.get("budget"),
-      timeline: formData.get("timeline"),
-      subject: formData.get("subject"),
-      message: formData.get("message"),
-    };
+    try {
+      const payload = {
+        ...formData,
+        service: "Digital Creation",
+        creationServices: selectedServices,
+      };
 
-    await submit(payload);
-  }
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-  if (status === "success") {
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Something went wrong. Please try again."
+        );
+      }
+
+      setSubmitted(true);
+      setFormData(initialForm);
+      setSelectedServices([]);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't submit your enquiry. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (submitted) {
     return (
-      <SuccessMessage
-        title="Your creative enquiry is in."
-        description="Thanks for sharing your project with us. We'll review the details and get back to you about the next steps."
-      />
+      <motion.div
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex min-h-[520px] flex-col items-center justify-center rounded-3xl border border-border bg-card px-6 py-16 text-center"
+      >
+        <div className="mb-6 flex size-16 items-center justify-center rounded-full bg-brand-electric/10 text-brand-electric">
+          <CheckCircle2 size={30} />
+        </div>
+
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-electric">
+          Enquiry received
+        </p>
+
+        <h3 className="max-w-md text-3xl font-semibold tracking-tight text-foreground">
+          Thank you for thinking of GFA.
+        </h3>
+
+        <p className="mt-4 max-w-md text-sm leading-7 text-muted-foreground">
+          Your project details are with us. We&apos;ll review your enquiry
+          and get back to you about the next steps.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-foreground transition hover:text-brand-electric"
+        >
+          Submit another enquiry
+          <ArrowRight size={16} />
+        </button>
+      </motion.div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Your name" name="fullname">
-          <input
-            id="fullname"
-            name="fullname"
-            required
-            autoComplete="name"
-            placeholder="Your full name"
-            className={inputClass}
-          />
-        </FormField>
+    <form onSubmit={handleSubmit} className="space-y-12">
+      {/* Contact details */}
+      <section>
+        <div className="mb-7">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-electric">
+            01 / Your details
+          </p>
 
-        <FormField label="Email address" name="email">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-            className={inputClass}
-          />
-        </FormField>
-      </div>
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+            Let&apos;s get acquainted.
+          </h3>
 
-      <FormField label="Business / organisation" name="company" optional>
-        <input
-          id="company"
-          name="company"
-          placeholder="Business name"
-          className={inputClass}
-        />
-      </FormField>
-
-      <FormField label="What do you need?" name="creationServices">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {creationServices.map((service) => (
-            <label
-              key={service}
-              className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-3.5 text-sm transition hover:border-brand-electric/40 has-[:checked]:border-brand-electric has-[:checked]:bg-brand-electric/5"
-            >
-              <input
-                type="checkbox"
-                name="creationServices"
-                value={service}
-                className="mt-0.5 accent-brand-electric"
-              />
-              <span>{service}</span>
-            </label>
-          ))}
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Tell us a little about yourself and how we can reach you.
+          </p>
         </div>
-      </FormField>
 
-      <FormField label="Project name" name="projectName" optional>
-        <input
-          id="projectName"
-          name="projectName"
-          placeholder="What are we creating?"
-          className={inputClass}
-        />
-      </FormField>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField label="Full name" name="fullname">
+            <input
+              id="fullname"
+              name="fullname"
+              type="text"
+              autoComplete="name"
+              required
+              value={formData.fullname}
+              onChange={(e) => updateField("fullname", e.target.value)}
+              placeholder="Your full name"
+              className={inputClass}
+            />
+          </FormField>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Estimated budget" name="budget">
-          <select
-            id="budget"
-            name="budget"
-            defaultValue=""
-            className={inputClass}
+          <FormField label="Email address" name="email">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={formData.email}
+              onChange={(e) => updateField("email", e.target.value)}
+              placeholder="you@example.com"
+              className={inputClass}
+            />
+          </FormField>
+
+          <FormField label="Phone number" name="phone">
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              required
+              value={formData.phone}
+              onChange={(e) => updateField("phone", e.target.value)}
+              placeholder="+44 7000 000000"
+              className={inputClass}
+            />
+          </FormField>
+
+          <FormField
+            label="Business / organisation"
+            name="company"
+            optional
           >
-            <option value="">Choose a budget</option>
-            {budgetOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </FormField>
+            <input
+              id="company"
+              name="company"
+              type="text"
+              autoComplete="organization"
+              value={formData.company}
+              onChange={(e) => updateField("company", e.target.value)}
+              placeholder="Your business name"
+              className={inputClass}
+            />
+          </FormField>
+        </div>
+      </section>
 
-        <FormField label="Preferred timeline" name="timeline">
-          <select
-            id="timeline"
-            name="timeline"
-            defaultValue=""
-            className={inputClass}
+      <div className="h-px bg-border" />
+
+      {/* Creative services */}
+      <section>
+        <div className="mb-7">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-electric">
+            02 / What you need
+          </p>
+
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+            What would you like us to help create?
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Select all the services relevant to your project.
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {creationServices.map((service) => {
+            const checked = selectedServices.includes(service);
+
+            return (
+              <button
+                key={service}
+                type="button"
+                aria-pressed={checked}
+                onClick={() => toggleService(service)}
+                className={`flex min-h-[58px] items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition ${
+                  checked
+                    ? "border-brand-electric bg-brand-electric/5 text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-brand-electric/50 hover:text-foreground"
+                }`}
+              >
+                <span
+                  className={`flex size-5 shrink-0 items-center justify-center rounded-md border transition ${
+                    checked
+                      ? "border-brand-electric bg-brand-electric text-white"
+                      : "border-border"
+                  }`}
+                >
+                  {checked && <Check size={13} strokeWidth={3} />}
+                </span>
+
+                <span>{service}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          Select at least one service.
+        </p>
+      </section>
+
+      <div className="h-px bg-border" />
+
+      {/* Project details */}
+      <section>
+        <div className="mb-7">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-electric">
+            03 / Your project
+          </p>
+
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+            Give us a little more context.
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            A few details will help us understand what you have in mind.
+          </p>
+        </div>
+
+        <div className="space-y-5">
+          <FormField label="Project name" name="projectName" optional>
+            <input
+              id="projectName"
+              name="projectName"
+              type="text"
+              value={formData.projectName}
+              onChange={(e) => updateField("projectName", e.target.value)}
+              placeholder="Give your project a name"
+              className={inputClass}
+            />
+          </FormField>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FormField label="Estimated budget" name="budget" optional>
+              <select
+                id="budget"
+                name="budget"
+                value={formData.budget}
+                onChange={(e) => updateField("budget", e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Select a budget range</option>
+                {budgetOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+
+            <FormField label="Expected timeline" name="timeline" optional>
+              <select
+                id="timeline"
+                name="timeline"
+                value={formData.timeline}
+                onChange={(e) => updateField("timeline", e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Select a timeline</option>
+                {timelineOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          </div>
+
+          <FormField label="Subject" name="subject" optional>
+            <input
+              id="subject"
+              name="subject"
+              type="text"
+              value={formData.subject}
+              onChange={(e) => updateField("subject", e.target.value)}
+              placeholder="A short description of your enquiry"
+              className={inputClass}
+            />
+          </FormField>
+
+          <FormField label="Tell us about your project" name="message">
+            <textarea
+              id="message"
+              name="message"
+              required
+              rows={6}
+              value={formData.message}
+              onChange={(e) => updateField("message", e.target.value)}
+              placeholder="What are you looking to create? What would success look like for you?"
+              className={`${inputClass} resize-y`}
+            />
+          </FormField>
+        </div>
+      </section>
+
+      {/* Submission */}
+      <div className="border-t border-border pt-7">
+        {error && (
+          <div
+            role="alert"
+            className="mb-5 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-600"
           >
-            <option value="">Choose a timeline</option>
-            {timelineOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </FormField>
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-sm text-xs leading-6 text-muted-foreground">
+            By submitting this form, you&apos;re taking the first step
+            towards making your project happen. We&apos;ll be in touch.
+          </p>
+
+          <button
+            type="submit"
+            disabled={isSubmitting || selectedServices.length === 0}
+            className="inline-flex min-h-14 shrink-0 items-center justify-center gap-3 rounded-full bg-brand-electric px-7 text-sm font-semibold text-white transition hover:bg-electric-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              <>
+                <LoaderCircle size={17} className="animate-spin" />
+                Sending enquiry...
+              </>
+            ) : (
+              <>
+                Send my enquiry
+                <Send size={16} />
+              </>
+            )}
+          </button>
+        </div>
       </div>
-
-      <FormField label="Subject" name="subject" optional>
-        <input
-          id="subject"
-          name="subject"
-          placeholder="A short summary"
-          className={inputClass}
-        />
-      </FormField>
-
-      <FormField label="Tell us about your project" name="message">
-        <textarea
-          id="message"
-          name="message"
-          rows={4}
-          required
-          minLength={10}
-          placeholder="Your idea, goals, what you have in mind, and any useful details..."
-          className={`${inputClass} resize-y leading-7`}
-        />
-      </FormField>
-
-      {status === "error" && <FormError message={errorMessage} />}
-
-      <SubmitButton loading={status === "loading"} />
     </form>
-  );
-}
-
-function SuccessMessage({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex min-h-[350px] flex-col items-center justify-center text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 text-green-600">
-        <CheckCircle2 className="h-8 w-8" />
-      </div>
-
-      <h3 className="mt-6 font-brand-display text-3xl font-semibold">
-        {title}
-      </h3>
-
-      <p className="mt-4 max-w-sm text-sm leading-7 text-muted-foreground">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function FormError({ message }: { message: string }) {
-  return (
-    <div
-      role="alert"
-      className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-600"
-    >
-      {message}
-    </div>
-  );
-}
-
-function SubmitButton({ loading }: { loading: boolean }) {
-  return (
-    <button
-      type="submit"
-      disabled={loading}
-      className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-brand-electric px-6 py-4 text-sm font-semibold text-white transition hover:bg-electric-700 disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      {loading ? (
-        <>
-          <LoaderCircle className="h-4 w-4 animate-spin" />
-          Sending enquiry...
-        </>
-      ) : (
-        <>
-          Send creative enquiry
-          <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </>
-      )}
-    </button>
   );
 }
