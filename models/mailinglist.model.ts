@@ -12,12 +12,13 @@ export interface IMailingList extends Document {
 const mailingListSchema = new Schema<IMailingList>(
   {
     email: {
-        type: String,
-        index: true,
-        lowercase: true,
-        trim: true,
-        required: true,
-        match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      required: true,
+      maxlength: 254,
+      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
     },
   },
   { timestamps: true }
