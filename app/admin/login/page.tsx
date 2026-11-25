@@ -361,7 +361,6 @@ export default function Login() {
                   </button>
                 </form>
 
-                {/* Security note */}
                 <div className="mt-8 flex items-start gap-3 border-t border-[#ECEBE6] pt-6 dark:border-border">
                   <div>
                     <p className="mt-1 text-[11px] leading-5 text-[#858994] dark:text-white/50">

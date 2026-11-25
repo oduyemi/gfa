@@ -310,8 +310,6 @@ export const HeaderStats = ({
           {/* Section heading */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="h-[2px] w-8 rounded-full bg-brand-electric" />
-
               <h3
                 className="
                   text-[10px] font-bold uppercase tracking-[0.2em]
