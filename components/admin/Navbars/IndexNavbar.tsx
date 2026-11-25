@@ -1,134 +1,89 @@
-
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
-import {
-  MenuOutlined,
-  CloseOutlined,
-  FileTextOutlined,
-  FacebookFilled,
-  TwitterOutlined,
-  GithubOutlined,
-} from "@ant-design/icons";
-
+import { Menu, X, ArrowUpRight, Sparkles } from "lucide-react";
 import { IndexDropdown } from "@/components/admin/Dropdowns/IndexDropdown";
+
 
 interface NavbarProps {
   brand?: string;
 }
 
-export default function Navbar({
-  brand = "Notus React",
+
+export default function IndexNavbar({
+  brand = "Go Far Agency",
 }: NavbarProps) {
   const [navbarOpen, setNavbarOpen] = useState(false);
 
   const closeNavbar = () => setNavbarOpen(false);
 
-  const navLinkClass =
-    "flex items-center px-3 py-4 text-xs font-bold uppercase text-slate-700 transition-colors hover:text-slate-500 lg:py-2";
-
-  const socialLinks = [
-    {
-      label: "Share",
-      icon: FacebookFilled,
-      href: "https://www.facebook.com/",
-    },
-    {
-      label: "Tweet",
-      icon: TwitterOutlined,
-      href: "https://twitter.com/",
-    },
-    {
-      label: "Star",
-      icon: GithubOutlined,
-      href: "https://github.com/",
-    },
-  ];
-
   return (
-    <nav className="fixed left-0 top-0 z-50 w-full bg-white px-2 py-3 shadow-md">
-      <div className="container mx-auto flex flex-wrap items-center justify-between px-4">
-        <div className="relative flex w-full items-center justify-between lg:w-auto">
+    <nav className="fixed left-0 top-0 z-50 w-full border-b border-border/70 bg-background/85 px-4 py-3 backdrop-blur-xl sm:px-6">
+      <div className="brand-container">
+        <div className="flex min-h-14 items-center justify-between gap-4">
+          {/* Brand */}
           <Link
             href="/"
             onClick={closeNavbar}
-            className="mr-4 inline-block whitespace-nowrap py-2 text-sm font-bold uppercase leading-relaxed text-slate-700 transition-colors hover:text-slate-900"
+            className="group flex items-center gap-3"
           >
-            {brand}
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-electric text-white shadow-md shadow-brand-electric/20 transition-transform group-hover:-rotate-6">
+              <Sparkles size={19} />
+            </span>
+
+            <span className="font-brand-display text-base font-bold tracking-tight text-foreground sm:text-lg">
+              {brand}
+              <span className="text-brand-electric">.</span>
+            </span>
           </Link>
 
+          {/* Desktop navigation */}
+          <div className="hidden items-center gap-5 lg:flex">
+            <IndexDropdown />
+          </div>
+
+          {/* Mobile menu toggle */}
           <button
             type="button"
             onClick={() => setNavbarOpen((prev) => !prev)}
             aria-label={navbarOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={navbarOpen}
             aria-controls="main-navigation"
-            className="block cursor-pointer rounded border border-transparent bg-transparent px-3 py-1 text-slate-700 outline-none transition-colors hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-400 lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:border-brand-electric/40 hover:text-brand-electric lg:hidden"
           >
-            {navbarOpen ? (
-              <CloseOutlined style={{ fontSize: 23 }} />
-            ) : (
-              <MenuOutlined style={{ fontSize: 23 }} />
-            )}
+            {navbarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
+        {/* Mobile navigation */}
         <div
           id="main-navigation"
-          className={`w-full flex-grow items-center bg-white transition-all duration-200 lg:flex lg:bg-transparent ${
-            navbarOpen ? "mt-3 block" : "hidden"
+          className={`overflow-hidden transition-all duration-300 lg:hidden ${
+            navbarOpen
+              ? "mt-3 max-h-40 border-t border-border pt-4 opacity-100"
+              : "max-h-0 opacity-0"
           }`}
+          aria-hidden={!navbarOpen}
         >
-          <ul className="mr-auto flex list-none flex-col lg:flex-row">
-            <li className="flex items-center">
-              <a
-                href="https://www.creative-tim.com/learning-lab/tailwind/react/overview/notus?ref=nr-index-navbar"
-                target="_blank"
-                rel="noopener noreferrer"
+          <div className="flex flex-col gap-4 pb-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Navigation
+              </span>
+
+              <button
+                type="button"
                 onClick={closeNavbar}
-                className={navLinkClass}
+                className="text-xs font-medium text-brand-electric"
               >
-                <FileTextOutlined
-                  className="mr-2 text-slate-400"
-                  style={{ fontSize: 18 }}
-                />
-                Docs
-              </a>
-            </li>
-          </ul>
+                Close
+              </button>
+            </div>
 
-          <ul className="flex list-none flex-col lg:ml-auto lg:flex-row">
-            <li className="flex items-center px-3 py-2 lg:px-0 lg:py-0">
+            <div onClick={closeNavbar}>
               <IndexDropdown />
-            </li>
-
-            {socialLinks.map((social) => {
-              const Icon = social.icon;
-
-              return (
-                <li key={social.label} className="flex items-center">
-                  <a
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    onClick={closeNavbar}
-                    className={navLinkClass}
-                  >
-                    <Icon
-                      className="text-slate-400"
-                      style={{ fontSize: 18 }}
-                    />
-
-                    <span className="ml-2 inline-block lg:hidden">
-                      {social.label}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </nav>

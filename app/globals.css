@@ -605,3 +605,8 @@
     outline-offset: 3px;
   }
 }
+
+.beblack{
+  background-color: #090a0c !important;
+  color: #fff !important;
+}

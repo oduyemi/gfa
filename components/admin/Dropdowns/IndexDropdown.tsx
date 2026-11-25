@@ -68,7 +68,7 @@ export const IndexDropdown = () => {
           <span className={sectionClass}>Admin Layout</span>
 
           <Link
-            href="/admin/dashboard"
+            href="/admin"
             role="menuitem"
             onClick={closeDropdown}
             className={linkClass}

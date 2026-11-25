@@ -60,7 +60,7 @@ export default function Login() {
         throw new Error(data.error || "Unable to sign in. Please try again.");
       }
 
-      router.replace("/admin/dashboard");
+      router.replace("/admin");
       router.refresh();
     } catch (err) {
       setError(
@@ -364,7 +364,7 @@ export default function Login() {
                 {/* Security note */}
                 <div className="mt-8 flex items-start gap-3 border-t border-[#ECEBE6] pt-6 dark:border-border">
                   <div>
-                    <p className="mt-1 text-[11px] leading-5 text-[#858994] dark:text-black/50">
+                    <p className="mt-1 text-[11px] leading-5 text-[#858994] dark:text-white/50">
                       This area is reserved for authorised Go Far Agency team
                       members.
                     </p>

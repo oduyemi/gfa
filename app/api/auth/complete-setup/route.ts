@@ -99,8 +99,9 @@ export async function POST(req: NextRequest) {
 
     try {
       await sendAdminOnboardingMail(
-        newUser.email,
-        newUser.fname
+        invitation.email,
+        invitation.fname,
+        `${process.env.NEXT_PUBLIC_APP_URL}/login`
       );
     } catch (emailError) {
       console.error(

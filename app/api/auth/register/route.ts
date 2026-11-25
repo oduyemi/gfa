@@ -4,11 +4,13 @@ import { getCurrentUser, requireRole } from "@/utils/auth";
 import AdminInvitation from "@/models/adminInvitation.model";
 import User from "@/models/user.model";
 import {
+  generateSetupToken,
   generateInvitationOtp,
   generateTemporaryPassword,
   hashSecret,
   getExpiration,
   INVITATION_TTL_MINUTES,
+  hashSetupToken,
 } from "@/utils/admin-invitation";
 import { sendAdminInvitationMail } from "@/helper/sendOnboardingMail";
 
@@ -99,7 +101,10 @@ export async function POST(req: NextRequest) {
     const temporaryPassword = generateTemporaryPassword();
     const invitationOtp = generateInvitationOtp();
     const [temporaryPasswordHash, invitationOtpHash] = await Promise.all([hashSecret(temporaryPassword), hashSecret(invitationOtp)]);
+    const setupToken = generateSetupToken();
+    const setupTokenHash = hashSetupToken(setupToken);
     const expiresAt = getExpiration(INVITATION_TTL_MINUTES);
+    const setupExpiresAt = expiresAt;
     await AdminInvitation.deleteOne({email: normalizedEmail});
     const invitation = await AdminInvitation.create({
       fname: normalizedFname,
@@ -111,19 +116,18 @@ export async function POST(req: NextRequest) {
       invitationOtpHash,
       expiresAt,
       attempts: 0,
-      setupTokenHash: null,
-      setupExpiresAt: null,
+      setupTokenHash,
+      setupExpiresAt,
       verifiedAt: null,
       createdBy: currentUser._id,
     });
 
-    const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL}/login`;
+    const activationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/activate-account?token=${encodeURIComponent(setupToken)}`;
     try {
       await sendAdminInvitationMail(
         normalizedEmail,
-        temporaryPassword,
         invitationOtp,
-        loginUrl,
+        activationUrl,
         INVITATION_TTL_MINUTES
       );
     } catch (emailError) {

@@ -1,10 +1,9 @@
 import Link from "next/link";
 
-
 const footerLinks = [
   { label: "About Us", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "MIT License", href: "/license" },
+  { label: "Services", href: "/services" },
+  { label: "Our Process", href: "/how-it-works" },
 ];
 
 
@@ -26,32 +25,13 @@ export const FooterAdmin = () => {
               >
                 Go Far Agency
               </Link>
-              {" | "}Distributed by{" "}
-              <a
-                href="https://themewagon.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-1 text-sm font-semibold text-slate-500 transition-colors hover:text-slate-700"
-              >
-                ThemeWagon
-              </a>
+              {" | "} All rights reserved
             </div>
           </div>
 
           {/* Footer navigation */}
           <div className="w-full px-4 md:w-6/12">
             <ul className="flex list-none flex-wrap justify-center md:justify-end">
-              <li>
-                <a
-                  href="https://www.creative-tim.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-3 py-1 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-800"
-                >
-                  Creative Tim
-                </a>
-              </li>
-
               {footerLinks.map((link) => (
                 <li key={link.label}>
                   <Link

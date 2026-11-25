@@ -16,10 +16,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      user,
-      firstLogin: user.firstLogin,
-    });
+    return NextResponse.json(
+      {
+        user,
+        firstLogin: user.firstLogin,
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
+    );
   } catch (error) {
     console.error("ME ERROR:", error);
 

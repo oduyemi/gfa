@@ -69,7 +69,6 @@ export async function compareSecret(
   return bcrypt.compare(secret, hashedSecret);
 }
 
-
 export function generateSetupToken() {
   return randomBytes(32).toString("hex");
 }
