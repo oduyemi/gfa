@@ -109,44 +109,40 @@ export const verifyToken = (token: string): TokenPayload | null => {
   }
 };
 
-/**
- * Reads the authentication token from an explicit request when available.
- * Falls back to Next.js request APIs for Server Components and other
- * request-bound server contexts.
- */
+
+
 const getToken = async (request?: Request): Promise<string | null> => {
+  let authorization: string | null = null;
+  let cookieToken: string | null = null;
+
   if (request) {
-    const authorization = request.headers.get("authorization");
-
-    if (authorization?.startsWith("Bearer ")) {
-      const bearerToken = authorization.slice(7).trim();
-
-      if (bearerToken) return bearerToken;
-    }
+    authorization = request.headers.get("authorization");
 
     const cookieHeader = request.headers.get("cookie");
 
-    if (!cookieHeader) return null;
+    if (cookieHeader) {
+      const tokenCookie = cookieHeader
+        .split(";")
+        .map((cookie) => cookie.trim())
+        .find((cookie) => cookie.startsWith(`${AUTH_COOKIE}=`));
 
-    const tokenCookie = cookieHeader
-      .split(";")
-      .map((cookie) => cookie.trim())
-      .find((cookie) => cookie.startsWith(`${AUTH_COOKIE}=`));
+      if (tokenCookie) {
+        const value = tokenCookie.slice(AUTH_COOKIE.length + 1);
 
-    if (!tokenCookie) return null;
-
-    const value = tokenCookie.slice(AUTH_COOKIE.length + 1);
-
-    try {
-      return decodeURIComponent(value) || null;
-    } catch {
-      return value || null;
+        try {
+          cookieToken = decodeURIComponent(value) || null;
+        } catch {
+          cookieToken = value || null;
+        }
+      }
     }
-  }
+  } else {
+    const headerList = await headers();
+    authorization = headerList.get("authorization");
 
-  // Used by Server Components and other request-bound server contexts.
-  const headerList = await headers();
-  const authorization = headerList.get("authorization");
+    const cookieStore = await cookies();
+    cookieToken = cookieStore.get(AUTH_COOKIE)?.value ?? null;
+  }
 
   if (authorization?.startsWith("Bearer ")) {
     const bearerToken = authorization.slice(7).trim();
@@ -154,9 +150,9 @@ const getToken = async (request?: Request): Promise<string | null> => {
     if (bearerToken) return bearerToken;
   }
 
-  const cookieStore = await cookies();
-  return cookieStore.get(AUTH_COOKIE)?.value ?? null;
+  return cookieToken;
 };
+
 
 export const getCurrentUser = async (
   request?: Request
